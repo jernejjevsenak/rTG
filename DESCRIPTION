@@ -1,0 +1,17 @@
+Package: woodformation
+Type: Package
+Title: Methods to analyse wood formation data
+Version: 0.1.0
+Author: Jernej Jevšenak [aut, cre]
+Maintainer: Jernej Jevšenak <jernej.jevsenak@gmail.com>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: ggplot2(>= 2.2.0), brnn(>= 0.6), mgcv (>= 1.8-34), knitr(>= 1.19)
+Depends: R(>= 3.5)
+NeedsCompilation: no
+Repository: CRAN
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1
