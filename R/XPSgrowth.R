@@ -1,6 +1,6 @@
-#' woodformation_fit
+#' XPSgrowth
 #'
-#' Function fits and compares selected methods for modeling xylem and floem formation data.
+#' XylemPhloemSeasonalGrowth: This Function fits and compares the selected methods for modeling seasonal xylem and phloem data.
 #' @param data_trees a data frame with ID variables and wood formation data with columns DY and EWM
 #' @param data_site a data frame with ID variables and initial parameter values for the selected methods
 #' @param search_initial_gom logical, should the algorithm to search initial Gompertz parameters be applied?
@@ -21,12 +21,12 @@
 #'
 #' @examples
 #' \dontrun{
-#' library(woodformation)
+#' library(rTG)
 #'
 #' # Load data
 #' data(data_site)
 #' data(data_trees)
-#' simulation_1 <- woodformation_fit(data_trees = data_trees,
+#' simulation_1 <- XPSgrowth(data_trees = data_trees,
 #'      data_site = data_site,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
 #'      fitting_method = c("gompertz", "gam", "brnn"),
@@ -37,7 +37,7 @@
 #'
 #' }
 
-woodformation_fit <- function(data_trees, data_site,
+XPSgrowth <- function(data_trees, data_site,
                  search_initial_gom = FALSE,
                  fitting_method = c("gompertz", "gam", "brnn"),
                  ID_vars = NULL,

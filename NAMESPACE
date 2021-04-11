@@ -1,4 +1,4 @@
-export(woodformation_fit)
+export(XPSgrowth)
 
 import(ggplot2)
 importFrom("stats", "nls", "nls.control", "predict")

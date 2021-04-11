@@ -1,6 +1,6 @@
-Package: woodformation
+Package: rTG
 Type: Package
-Title: Methods to analyse wood formation data
+Title: Methods to analyse seasonal radial Tree Growth (rTG) data
 Version: 0.1.0
 Author: Jernej Jevšenak [aut, cre]
 Maintainer: Jernej Jevšenak <jernej.jevsenak@gmail.com>
