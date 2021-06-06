@@ -12,8 +12,8 @@
 #'   \item{Year}{2011, 2017}
 #'   \item{Tree}{Tree ID indicators ranging from 1 to 6}
 #'   \item{Sample}{A consecutive number of collected sample}
-#'   \item{DY}{Day in a year}
-#'   \item{EWM}{The total number of formed cells / the total ring width}
+#'   \item{DOY}{Day Of a Year}
+#'   \item{Width}{The total number of radial cells / the total ring width}
 #' }
 #' @source Gričar, J., Prislan, P., De Luis, M., Gryc, V., Hacurová, J.,
 #' Vavrčík, H., Čufar, K., 2015. Plasticity in variation of xylem and phloem

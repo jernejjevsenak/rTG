@@ -1,6 +1,6 @@
-#' data_site
+#' parameters
 #'
-#' A dataset with model fitting parameters for different regression methods.
+#' data frame with model fitting parameters for different regression methods.
 #'
 #' @format A data frame with 79 rows and 2 variables:
 #' \describe{
@@ -18,4 +18,4 @@
 #' }
 #'
 #' @export
-"data_site"
+"parameters"

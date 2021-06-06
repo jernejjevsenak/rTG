@@ -6,31 +6,62 @@
 \usage{
 XPSgrowth(
   data_trees,
-  data_site,
+  parameters = NULL,
   search_initial_gom = FALSE,
   fitting_method = c("gompertz", "gam", "brnn"),
   ID_vars = NULL,
   fitted_save = FALSE,
   add_zeros = TRUE,
-  post_process = TRUE
+  post_process = TRUE,
+  unified_parameters = FALSE,
+  gom_a = NA,
+  gom_b = NA,
+  gom_k = NA,
+  brnn_neurons = 3,
+  gam_k = 8,
+  gam_sp = 0.5
 )
 }
 \arguments{
-\item{data_trees}{a data frame with ID variables and wood formation data with columns DY and EWM}
+\item{data_trees}{a data frame with ID variables and wood formation data with
+columns DOY and Width}
 
-\item{data_site}{a data frame with ID variables and initial parameter values for the selected methods}
+\item{parameters}{a data frame with ID variables and initial parameter values
+for the selected methods}
 
-\item{search_initial_gom}{logical, should the algorithm to search initial Gompertz parameters be applied?}
+\item{search_initial_gom}{logical, should the algorithm to search initial
+Gompertz parameters be applied?}
 
-\item{fitting_method}{vector of one or more methods to be compared: "gompertz", "gam", "brnn"}
+\item{fitting_method}{vector of one or more methods to be compared:
+"gompertz", "gam", "brnn"}
 
-\item{ID_vars}{character vector of variables which indicate column names of ID variables}
+\item{ID_vars}{character vector of variables which indicate column names of
+ID variables}
 
-\item{fitted_save}{logical, should the fitted curves be saved in current working directory?}
+\item{fitted_save}{logical, should the fitted curves be saved in current
+working directory?}
 
-\item{add_zeros}{logical, should zero observations at the beginning of growing season be added?}
+\item{add_zeros}{logical, should zero observations at the beginning of
+growing season be added?}
 
 \item{post_process}{logical, should the post-process algorithm be applied?}
+
+\item{unified_parameters}{logical, if FALSE, the algorithm will use only
+manually selected function parameters. See the arguments 'gom_a', 'gom_b',
+'gom_k', 'brnn_neurons', 'gam_k' and 'gam_sp'. Default is FALSE}
+
+\item{gom_a}{numeric, the parameter a for the Gompertz function}
+
+\item{gom_b}{numeric, the parameter b for the Gompertz function}
+
+\item{gom_k}{numeric, the parameter k for the Gompertz function}
+
+\item{brnn_neurons}{positive intiger, the number of neurons to be used by
+the BRNN method}
+
+\item{gam_k}{numeric, the parameter k for General Additive Model (GAM)}
+
+\item{gam_sp}{numeric, the parameter sp for General Additive Model (GAM)}
 }
 \value{
 a list with the following elements:
@@ -41,17 +72,18 @@ a list with the following elements:
 }
 }
 \description{
-XylemPhloemSeasonalGrowth: This Function fits and compares the selected methods for modeling seasonal xylem and phloem data.
+XylemPhloemSeasonalGrowth: This Function fits and compares the selected
+methods for modeling seasonal xylem and phloem data.
 }
 \examples{
 \dontrun{
 library(rTG)
 
 # Load data
-data(data_site)
+data(parameters)
 data(data_trees)
 simulation_1 <- XPSgrowth(data_trees = data_trees,
-     data_site = data_site,
+     parameters = parameters,
      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
      fitting_method = c("gompertz", "gam", "brnn"),
      fitted_save = TRUE,
