@@ -16,6 +16,9 @@
 #' working directory?
 #' @param add_zeros logical, should zero observations at the beginning of
 #' growing season be added?
+#' @param add_zeros_before if 'min' (character) then zeros will be added prior
+#' to the first observation in each year. Alternatively, users can specify
+#' absolute DOY prior which zeros will be added.
 #' @param post_process logical, should the post-process algorithm be applied?
 #' @param unified_parameters logical, if FALSE, the algorithm will use only
 #' manually selected function parameters. See the arguments 'gom_a', 'gom_b',
@@ -61,8 +64,8 @@ XPSgrowth <- function(data_trees, parameters = NULL,
                  ID_vars = NULL,
                  fitted_save = FALSE,
                  add_zeros = TRUE,
+                 add_zeros_before = 'min',
                  post_process = TRUE,
-
                  unified_parameters = FALSE,
                  gom_a = NA, gom_b = NA, gom_k = NA,
                  brnn_neurons = 3,
@@ -78,6 +81,7 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   errors_grid <- NA
   txtProgressBar <- NULL
   setTxtProgressBar <- NULL
+  add_zeros_before <- NULL
 
   # Progress bar
   pb <- txtProgressBar(min = 0, max = length(fitting_method), style = 3)
@@ -178,7 +182,23 @@ if (current_fitting_method == "gompertz"){
     # add zeros at the beginning
     if(add_zeros == TRUE){
 
-      min_DOY <- min(temp_data$DOY)
+      if (add_zeros_before == 'min'){
+
+        min_DOY <- min(temp_data$DOY)
+
+      } else {
+
+        if (!is.numeric(add_zeros_before) & add_zeros_before < 0){
+
+          stop("The argument 'add_zeros_before' should be numeric and greater than 0")
+
+        }
+
+        min_DOY <- add_zeros_before
+
+      }
+
+
       row_list <- list()
       for (J in 1:min_DOY){
         temp_row <- temp_data[1,]
@@ -292,8 +312,24 @@ if (current_fitting_method == "gompertz"){
 
       # add zeros at the beginning
     if (add_zeros == TRUE){
-    min_DOY <- min(temp_data$DOY)
-      row_list <- list()
+
+      if (add_zeros_before == 'min'){
+
+        min_DOY <- min(temp_data$DOY)
+
+      } else {
+
+        if (!is.numeric(add_zeros_before) & add_zeros_before < 0){
+
+          stop("The argument 'add_zeros_before' should be numeric and greater than 0")
+
+        }
+
+        min_DOY <- add_zeros_before
+
+      }
+
+    row_list <- list()
 
       for (J in 1:min_DOY){
         temp_row <- temp_data[1,]
@@ -406,7 +442,22 @@ if (current_fitting_method == "gompertz"){
       # add zeros at the beggining
     if(add_zeros == TRUE){
 
-      min_DOY <- min(temp_data$DOY) - 1
+      if (add_zeros_before == 'min'){
+
+        min_DOY <- min(temp_data$DOY)
+
+      } else {
+
+        if (!is.numeric(add_zeros_before) & add_zeros_before < 0){
+
+          stop("The argument 'add_zeros_before' should be numeric and greater than 0")
+
+        }
+
+        min_DOY <- add_zeros_before
+
+      }
+
       row_list <- list()
       for (J in 1:min_DOY){
         temp_row <- temp_data[1,]

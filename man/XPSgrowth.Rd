@@ -12,6 +12,7 @@ XPSgrowth(
   ID_vars = NULL,
   fitted_save = FALSE,
   add_zeros = TRUE,
+  add_zeros_before = "min",
   post_process = TRUE,
   unified_parameters = FALSE,
   gom_a = NA,
@@ -43,6 +44,10 @@ working directory?}
 
 \item{add_zeros}{logical, should zero observations at the beginning of
 growing season be added?}
+
+\item{add_zeros_before}{if 'min' (character) then zeros will be added prior
+to the first observation in each year. Alternatively, users can specify
+absolute DOY prior which zeros will be added.}
 
 \item{post_process}{logical, should the post-process algorithm be applied?}
 
