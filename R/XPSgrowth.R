@@ -26,7 +26,7 @@
 #' @param gom_a numeric, the parameter a for the Gompertz function
 #' @param gom_b numeric, the parameter b for the Gompertz function
 #' @param gom_k numeric, the parameter k for the Gompertz function
-#' @param brnn_neurons positive intiger, the number of neurons to be used by
+#' @param brnn_neurons positive integer, the number of neurons to be used by
 #' the BRNN method
 #' @param gam_k numeric, the parameter k for General Additive Model (GAM)
 #' @param gam_sp numeric, the parameter sp for General Additive Model (GAM)
