@@ -4,12 +4,14 @@ Title: Methods to analyse seasonal radial Tree Growth (rTG) data
 Version: 0.2.0
 Author: Jernej Jevšenak [aut, cre]
 Maintainer: Jernej Jevšenak <jernej.jevsenak@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: The rTG r package can be used (1) to compare and select fitting 
+    methods or (2) to apply fitting method on xylem or phloem formation data to 
+    describe the temporal dynamics of secondary growth.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: ggplot2(>= 2.2.0), brnn(>= 0.6), mgcv (>= 1.8-34), knitr(>= 1.19)
+Imports: ggplot2(>= 2.2.0), brnn(>= 0.6), mgcv (>= 1.8-34), knitr(>= 1.19),
+    dplyr(>= 0.1.0), magrittr(>= 1.5)
 Depends: R(>= 3.5)
 URL: https://github.com/jernejjevsenak/rTG
 BugReports: https://github.com/jernejjevsenak/rTG/issues

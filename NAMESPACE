@@ -1,9 +1,11 @@
 export(XPSgrowth)
+S3method(plot, "xpsg")
+S3method(summary, "xpsg")
 
 import(ggplot2)
 importFrom("stats", "nls", "nls.control", "predict")
 importFrom("utils", "capture.output", "setTxtProgressBar", "txtProgressBar")
 importFrom("brnn", "brnn", "predict.brnn")
 importFrom("mgcv", "gam", "predict.gam")
-
-
+importFrom("dplyr", "summarise", "group_by", "n")
+importFrom("magrittr", "%>%")

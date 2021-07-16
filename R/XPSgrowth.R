@@ -81,7 +81,7 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   errors_grid <- NA
   txtProgressBar <- NULL
   setTxtProgressBar <- NULL
-  add_zeros_before <- NULL
+  # add_zeros_before <- NULL
 
   # Progress bar
   pb <- txtProgressBar(min = 0, max = length(fitting_method), style = 3)
@@ -571,7 +571,7 @@ if (current_fitting_method == "gompertz"){
 
                       )
 
-  class(output_list) <- "wf"
+  class(output_list) <- "xpsg"
 
   return(output_list)
 
