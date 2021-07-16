@@ -1,3 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^cran-comments\.md$
+^cran-comments\.MD$
+^CRAN-RELEASE$
+^revdep$
+^\.travis\.yml$
+^README\.md$
+^README-.*\.png$
