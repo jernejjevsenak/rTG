@@ -1,9 +1,9 @@
 Package: rTG
 Type: Package
-Title: Methods to Analyse Seasonal Radial Tree Growth (rTG) Data
+Title: Methods to Analyse Seasonal Radial Tree Growth Data
 Version: 0.2.1
 Author: Jernej Jevsenak [aut, cre]
-Maintainer: Jernej Jevšenak <jernej.jevsenak@gmail.com>
+Maintainer: Jernej Jevsenak <jernej.jevsenak@gmail.com>
 Description: The rTG r package can be used (1) to compare and select fitting 
     methods or (2) to apply fitting method on xylem or phloem formation data to 
     describe the temporal dynamics of secondary growth.
