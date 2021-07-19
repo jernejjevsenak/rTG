@@ -93,5 +93,6 @@ simulation_1 <- XPSgrowth(data_trees = data_trees,
      fitted_save = FALSE,
      search_initial_gom = TRUE,
      add_zeros = TRUE,
+     add_zeros_before = 'min',
      post_process = TRUE)
 }

@@ -53,6 +53,7 @@
 #'      fitted_save = FALSE,
 #'      search_initial_gom = TRUE,
 #'      add_zeros = TRUE,
+#'      add_zeros_before = 'min',
 #'      post_process = TRUE)
 
 XPSgrowth <- function(data_trees, parameters = NULL,
@@ -78,7 +79,6 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   errors_grid <- NA
   txtProgressBar <- NULL
   setTxtProgressBar <- NULL
-  # add_zeros_before <- NULL
 
   # Progress bar
   pb <- txtProgressBar(min = 0, max = length(fitting_method), style = 3)
@@ -142,6 +142,11 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   list_solution_b <- list()
   list_solution_k <- list()
 
+  # I define those two objects as NA
+  # If grid search is used, they are overwritten
+  errors_grid <- NA
+  final_parameters <- NA
+
   b_holder = 1
   p = 1
   p2 = 1
@@ -194,7 +199,6 @@ if (current_fitting_method == "gompertz"){
         min_DOY <- add_zeros_before
 
       }
-
 
       row_list <- list()
       for (J in 1:min_DOY){
@@ -296,7 +300,8 @@ if (current_fitting_method == "gompertz"){
     solution_k = c(do.call(rbind, list_solution_k))
   )
 
-  errors <- errors[!(errors %in% solutions)]
+  # remove solutions from errors grid
+  errors_grid <- errors_grid[!(errors_grid %in% solutions)]
 
   } else if (current_fitting_method == "brnn"){
 
@@ -343,9 +348,6 @@ if (current_fitting_method == "gompertz"){
                      neurons = temp_neurons$brnn_neurons))
 
       temp_data$Width_pred <- predict(output)
-
-      # plot(y = temp_data$Width, x = temp_data$DOY)
-      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       if (post_process == TRUE){
 
@@ -405,11 +407,6 @@ if (current_fitting_method == "gompertz"){
 
       }
     }
-      #plot(y = temp_data$Width, x = temp_data$DOY, type = "p")
-      #lines(y = temp_data$Width_pred, x = temp_data$DOY)
-
-      errors <- NA
-      final_parameters <- NA
 
       temp_data$first_diff <- NULL
       temp_data$method <- "brnn"
@@ -536,9 +533,6 @@ if (current_fitting_method == "gompertz"){
      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       }
-
-      errors <- NA
-      final_parameters <- NA
 
       temp_data$method <- "gam"
       temp_data$first_diff <- NULL
