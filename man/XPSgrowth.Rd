@@ -61,7 +61,7 @@ manually selected function parameters. See the arguments 'gom_a', 'gom_b',
 
 \item{gom_k}{numeric, the parameter k for the Gompertz function}
 
-\item{brnn_neurons}{positive intiger, the number of neurons to be used by
+\item{brnn_neurons}{positive integer, the number of neurons to be used by
 the BRNN method}
 
 \item{gam_k}{numeric, the parameter k for General Additive Model (GAM)}
@@ -81,7 +81,6 @@ XylemPhloemSeasonalGrowth: This Function fits and compares the selected
 methods for modeling seasonal xylem and phloem data.
 }
 \examples{
-\dontrun{
 library(rTG)
 
 # Load data
@@ -91,10 +90,12 @@ simulation_1 <- XPSgrowth(data_trees = data_trees,
      parameters = parameters,
      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
      fitting_method = c("gompertz", "gam", "brnn"),
-     fitted_save = TRUE,
+     fitted_save = FALSE,
      search_initial_gom = TRUE,
      add_zeros = TRUE,
      post_process = TRUE)
 
-}
+plot(simulation_1)
+summary(simulation_1)
+
 }
