@@ -1,10 +1,9 @@
 library(rTG)
 library(testthat)
 
-
-
 data(parameters)
 data(data_trees)
+
 simulation_1 <- XPSgrowth(data_trees = data_trees,
       parameters = parameters,
       ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
@@ -14,7 +13,7 @@ simulation_1 <- XPSgrowth(data_trees = data_trees,
       add_zeros = TRUE,
       post_process = TRUE)
 
-expect_is(simulation_1, "xpsg")
-expect_is(simulation_1[[1]], "data.frame")
-expect_is(simulation_1[[2]], "logical")
-expect_is(simulation_1[[3]], "character")
+expect_type(simulation_1, "list")
+expect_type(simulation_1$fitted, "list")
+expect_type(simulation_1$gompertz_grid_search, "logical")
+expect_type(simulation_1$gompertz_grid_search_errors, "character")
