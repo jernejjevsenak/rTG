@@ -15,5 +15,5 @@ simulation_1 <- XPSgrowth(data_trees = data_trees,
 
 expect_type(simulation_1, "list")
 expect_type(simulation_1$fitted, "list")
-expect_type(simulation_1$gompertz_grid_search, "logical")
+expect_type(simulation_1$gompertz_grid_search, "list")
 expect_type(simulation_1$gompertz_grid_search_errors, "character")
