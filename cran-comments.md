@@ -5,9 +5,8 @@ This is the first submission of the rTG r package. This is new r package providi
 Best
 Jernej
 
-
 ##  First submission
-* This is a first submission of the package rTG (radial Tree Growth).
+* This is a first (fixed) submission of the package rTG (radial Tree Growth).
 
 ## Test environments
 * local OS X install, R 4.0.4

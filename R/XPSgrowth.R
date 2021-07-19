@@ -41,7 +41,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' library(rTG)
 #'
 #' # Load data
@@ -51,12 +50,14 @@
 #'      parameters = parameters,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
 #'      fitting_method = c("gompertz", "gam", "brnn"),
-#'      fitted_save = TRUE,
+#'      fitted_save = FALSE,
 #'      search_initial_gom = TRUE,
 #'      add_zeros = TRUE,
 #'      post_process = TRUE)
 #'
-#' }
+#' plot(simulation_1)
+#' summary(simulation_1)
+#'
 
 XPSgrowth <- function(data_trees, parameters = NULL,
                  search_initial_gom = FALSE,
