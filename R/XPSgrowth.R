@@ -54,10 +54,6 @@
 #'      search_initial_gom = TRUE,
 #'      add_zeros = TRUE,
 #'      post_process = TRUE)
-#'
-#' plot(simulation_1)
-#' summary(simulation_1)
-#'
 
 XPSgrowth <- function(data_trees, parameters = NULL,
                  search_initial_gom = FALSE,
