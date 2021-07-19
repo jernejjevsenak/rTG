@@ -15,6 +15,7 @@ Description: Methods for comparing different regression algorithms for
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Suggests: testthat
 Imports: ggplot2(>= 2.2.0), brnn(>= 0.6), mgcv (>= 1.8-34), knitr(>= 1.19),
     dplyr(>= 0.1.0), magrittr(>= 1.5)
 Depends: R(>= 3.5)
