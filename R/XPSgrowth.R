@@ -256,11 +256,11 @@ if (current_fitting_method == "gompertz"){
       temp_data <- rbind(new_rows, temp_data)
     }
 
-    output <- try(nls(Width ~ a*exp(-exp(b - k*DOY)), data = temp_data,
+    capture.output(output <- try(nls(Width ~ a*exp(-exp(b - k*DOY)), data = temp_data,
                       start=list(a = gom_a, b = gom_b, k = gom_k),
                       nls.control(maxiter = 1000, tol = 1e-05,
                                   minFactor = 1/1024, printEval = FALSE,
-                                  warnOnly = FALSE)), silent = TRUE)
+                                  warnOnly = FALSE)), silent = TRUE))
 
     if (class(output) == "nls"){
 
@@ -297,12 +297,11 @@ if (current_fitting_method == "gompertz"){
         gom_b <- par_grid$gom_b[ii]
         gom_k <- par_grid$gom_k[ii]
 
-        output <- try(nls(Width ~ a*exp(-exp(b - k*DOY)), data = temp_data,
+        capture.output(output <- try(nls(Width ~ a*exp(-exp(b - k*DOY)), data = temp_data,
                           start=list(a = gom_a, b = gom_b, k = gom_k),
                           nls.control(maxiter = 1000, tol = 1e-05,
                                       minFactor = 1/1024, printEval = FALSE,
-                                      warnOnly = FALSE)))
-
+                                      warnOnly = FALSE)), silent=TRUE))
 
         if (class(output) == "nls"){
 
@@ -388,8 +387,8 @@ if (current_fitting_method == "gompertz"){
 
     }
 
-      capture.output(output <- brnn(Width ~ DOY, data = temp_data,
-                     neurons = temp_neurons$brnn_neurons))
+      capture.output(output <- try(brnn(Width ~ DOY, data = temp_data,
+                     neurons = temp_neurons$brnn_neurons), silent=TRUE))
 
       temp_data$Width_pred <- predict(output)
 
