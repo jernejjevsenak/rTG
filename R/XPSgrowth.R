@@ -58,7 +58,7 @@
 
 XPSgrowth <- function(data_trees, parameters = NULL,
                  search_initial_gom = FALSE,
-                 fitting_method = c("gompertz", "gam", "brnn"),
+                 fitting_method = c("gompertz", "GAM", "brnn"),
                  ID_vars = NULL,
                  fitted_save = FALSE,
                  add_zeros = TRUE,
@@ -66,8 +66,8 @@ XPSgrowth <- function(data_trees, parameters = NULL,
                  post_process = TRUE,
                  unified_parameters = FALSE,
                  gom_a = NA, gom_b = NA, gom_k = NA,
-                 brnn_neurons = 3,
-                 gam_k = 8, gam_sp = 0.5){
+                 brnn_neurons = NA,
+                 gam_k = NA, gam_sp = NA){
 
   # Defining global variables
   Width <- NULL
@@ -108,6 +108,50 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   if (!("Width" %in% colnames(data_trees))){
     stop("Column 'Width' is missing in data_trees")
   }
+
+
+  # Just in case, convert fitting methods to lowercase
+  fitting_method <- tolower(fitting_method)
+
+  # If you use unified parameters, you must provide them
+  if (unified_parameters == TRUE){
+
+    if ("gompertz" %in% fitting_method){
+
+      tm_g_p <- c(gom_a, gom_b, gom_k)
+
+      if (sum(is.na(tm_g_p) > 0)){
+
+        stop("If unified_parameters is used, you must provide Gompertz parameters")
+
+      }
+    }
+
+
+    if ("brnn" %in% fitting_method){
+
+      if (sum(is.na(brnn_neurons) > 0)){
+
+        stop("If unified_parameters is used, you must provide brnn_neurons parameter")
+
+      }
+    }
+
+
+    if ("gam" %in% fitting_method){
+
+      tm_g_p <- c(gam_k, gam_sp)
+
+      if (sum(is.na(tm_g_p) > 0)){
+
+        stop("If unified_parameters is used, you must provide GAM parameters")
+
+      }
+    }
+
+  }
+
+
 
   # Create data key
   data_trees$key <- apply(data_trees[, ID_vars], 1,
@@ -348,6 +392,9 @@ if (current_fitting_method == "gompertz"){
                      neurons = temp_neurons$brnn_neurons))
 
       temp_data$Width_pred <- predict(output)
+
+      # Prediction for DOY 1 must always be 0
+      temp_data[1, "Width_pred"] <- 0
 
       if (post_process == TRUE){
 

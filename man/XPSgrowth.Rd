@@ -8,7 +8,7 @@ XPSgrowth(
   data_trees,
   parameters = NULL,
   search_initial_gom = FALSE,
-  fitting_method = c("gompertz", "gam", "brnn"),
+  fitting_method = c("gompertz", "GAM", "brnn"),
   ID_vars = NULL,
   fitted_save = FALSE,
   add_zeros = TRUE,
@@ -18,9 +18,9 @@ XPSgrowth(
   gom_a = NA,
   gom_b = NA,
   gom_k = NA,
-  brnn_neurons = 3,
-  gam_k = 8,
-  gam_sp = 0.5
+  brnn_neurons = NA,
+  gam_k = NA,
+  gam_sp = NA
 )
 }
 \arguments{
