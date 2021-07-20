@@ -3,9 +3,8 @@
 
 # rTG
 
-rTG (radial Tree Growth) R package consists of methods to analyse
-seasonal radial tree growth data, such as xylem and phloem formation
-data.
+rTG (radial Tree Growth) R package consists of methods to analyze seasonal 
+radial tree growth data, such as xylem and phloem formation data.
 
 ## Installation
 

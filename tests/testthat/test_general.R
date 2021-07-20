@@ -30,18 +30,3 @@ XPSgrowth(data_trees = data_trees,
           search_initial_gom = FALSE,
           add_zeros = TRUE,
           post_process = TRUE))
-
-
-tzh <- XPSgrowth(data_trees = data_trees,
-          parameters = parameters,
-          unified_parameters = FALSE,
-          ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
-          fitting_method = c("gompertz", "gam", "brnn"),
-          fitted_save = FALSE,
-          search_initial_gom = TRUE,
-          add_zeros = FALSE,
-          post_process = FALSE)
-
-tzh[[2]]
-
-plot(tzh)

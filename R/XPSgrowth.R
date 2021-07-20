@@ -291,6 +291,8 @@ if (current_fitting_method == "gompertz"){
 
       if (search_initial_gom == TRUE){
 
+        # print("Searching for initial Gompertz parameters... This might take some time")
+
       for (ii in 1:nrow(par_grid)){
 
         gom_a <- par_grid$gom_a[ii]
