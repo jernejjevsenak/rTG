@@ -89,9 +89,9 @@ data(data_trees)
 simulation_1 <- XPSgrowth(data_trees = data_trees,
      parameters = parameters,
      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
-     fitting_method = c("gompertz", "gam", "brnn"),
+     fitting_method = c("gam", "brnn"),
      fitted_save = FALSE,
-     search_initial_gom = TRUE,
+     search_initial_gom = FALSE,
      add_zeros = TRUE,
      add_zeros_before = 'min',
      post_process = TRUE)

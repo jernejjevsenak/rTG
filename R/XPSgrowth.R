@@ -201,6 +201,7 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
 for (ut in fitting_method){
 
+
   setTxtProgressBar(pb, pbar_holder)
 
      current_fitting_method = ut
@@ -354,6 +355,7 @@ if (current_fitting_method == "gompertz"){
 
     for (i in unique_keys){
 
+
     temp_data <- data_trees[data_trees$key == i,]
     temp_neurons <- data_neurons[data_neurons$key == i, ]
 
@@ -396,6 +398,9 @@ if (current_fitting_method == "gompertz"){
 
       # Prediction for DOY 1 must always be 0
       temp_data[1, "Width_pred"] <- 0
+
+      plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+      lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       if (post_process == TRUE){
 
@@ -455,6 +460,9 @@ if (current_fitting_method == "gompertz"){
 
       }
     }
+
+      plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+      lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       temp_data$first_diff <- NULL
       temp_data$method <- "brnn"
@@ -518,12 +526,16 @@ if (current_fitting_method == "gompertz"){
 
       temp_data$Width_pred <- predict(output)
 
-      # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+       plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+       lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       if (post_process == TRUE){
 
-      avg_fit <- mean(temp_data$Width_pred)
+      avg_fit <- ifelse(
+        add_zeros == TRUE, mean(temp_data$Width_pred),
+        mean(temp_data$Width_pred)/2 ) # That is a rule of thumb, but works nice for all the data
+
+
       max_fit <- max(temp_data$Width_pred)
 
       lagged_Width_pred <- temp_data$Width_pred[-length(temp_data$Width_pred)]
@@ -556,6 +568,7 @@ if (current_fitting_method == "gompertz"){
 
       for (J in 1:nrow(temp_data)){
 
+        J_shift <- ifelse(J == 1, 0, 1)
 
         if (temp_data[J, "Width_pred"] < 0.0001){
 
@@ -563,11 +576,11 @@ if (current_fitting_method == "gompertz"){
 
         } else if (temp_data[J, "first_diff"] < 0){
 
-          temp_data[J, "Width_pred"] <- temp_data[J - 1, "Width_pred"]
+          temp_data[J, "Width_pred"] <- temp_data[J - J_shift, "Width_pred"]
 
-        } else if ((temp_data[J, "Width_pred"] - temp_data[J - 1, "Width_pred"]) < 0){
+        } else if ((temp_data[J, "Width_pred"] - temp_data[J - J_shift, "Width_pred"]) < 0){
 
-          temp_data[J, "Width_pred"] <- temp_data[J - 1, "Width_pred"]
+          temp_data[J, "Width_pred"] <- temp_data[J - J_shift, "Width_pred"]
 
         } else {
 
@@ -577,8 +590,8 @@ if (current_fitting_method == "gompertz"){
 
         }
 
-     # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-     # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+       plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+       lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       }
 
