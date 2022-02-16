@@ -49,9 +49,9 @@
 #' simulation_1 <- XPSgrowth(data_trees = data_trees,
 #'      parameters = parameters,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
-#'      fitting_method = c("gompertz", "gam", "brnn"),
+#'      fitting_method = c("gam", "brnn"),
 #'      fitted_save = FALSE,
-#'      search_initial_gom = TRUE,
+#'      search_initial_gom = FALSE,
 #'      add_zeros = TRUE,
 #'      add_zeros_before = 'min',
 #'      post_process = TRUE)
@@ -79,6 +79,8 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   errors_grid <- NA
   txtProgressBar <- NULL
   setTxtProgressBar <- NULL
+  lines <- NULL
+  note <- NULL
 
   # Progress bar
   pb <- txtProgressBar(min = 0, max = length(fitting_method), style = 3)
@@ -151,13 +153,20 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
   }
 
-
-
   # Create data key
-  data_trees$key <- apply(data_trees[, ID_vars], 1,
-                          paste0, sep = "", collapse = "_")
 
-  data_trees$key <- gsub(" ", "", data_trees$key) # remove empty characters
+  if (length(ID_vars) > 1){
+
+    data_trees$key <- apply(data_trees[, ID_vars], 1,
+                            paste0, sep = "", collapse = "_")
+
+    data_trees$key <- gsub(" ", "", data_trees$key) # remove empty characters
+
+  } else {
+
+    data_trees$key <- data_trees[, ID_vars]
+
+  }
 
   if (unified_parameters == TRUE){
 
@@ -172,10 +181,18 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
   } else {
 
-    parameters$key <- apply(parameters[, ID_vars], 1,
-                            paste0, sep = "", collapse = "_")
+    if (length(ID_vars) > 1){
 
-    parameters$key <- gsub(" ", "", parameters$key) # remove empty characters
+      parameters$key <- apply(parameters[, ID_vars], 1,
+                              paste0, sep = "", collapse = "_")
+
+      parameters$key <- gsub(" ", "", parameters$key) # remove empty characters
+
+    } else {
+
+      parameters$key <- parameters[, ID_vars]
+
+    }
 
   }
 
@@ -198,9 +215,7 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
   unique_keys <- unique(data_trees$key)
 
-
 for (ut in fitting_method){
-
 
   setTxtProgressBar(pb, pbar_holder)
 
@@ -225,6 +240,9 @@ if (current_fitting_method == "gompertz"){
     gom_k <- temp_parameters$gom_k
 
     temp_data <- data_trees[data_trees$key == i,]
+
+    # specify the measurement type - so we can distinguish from added zeros
+    temp_data$note <- "raw measurement"
 
     # add zeros at the beginning
     if(add_zeros == TRUE){
@@ -254,6 +272,7 @@ if (current_fitting_method == "gompertz"){
       new_rows <- do.call(rbind, row_list)
       new_rows$DOY <- c(1:min_DOY)
       new_rows$Width <- 0
+      new_rows$note <- "added zero"
       temp_data <- rbind(new_rows, temp_data)
     }
 
@@ -263,7 +282,10 @@ if (current_fitting_method == "gompertz"){
                                   minFactor = 1/1024, printEval = FALSE,
                                   warnOnly = FALSE)), silent = TRUE))
 
-    if (class(output) == "nls"){
+    # When all parameters are null, the class can still be nls. Additional check is needed
+    parm_test <- c(gom_a, gom_b, gom_k)
+
+    if (class(output) == "nls" & !is.null(parm_test)){
 
       temp_data$Width_pred <- predict(output)
 
@@ -279,10 +301,12 @@ if (current_fitting_method == "gompertz"){
       b_holder = b_holder + 1
 
       if (fitted_save == TRUE){
+
         ggplot(temp_data, aes(x = DOY, y = Width_pred)) + geom_line() +
-          geom_point(temp_data, mapping = aes(x = DOY, y = Width)) +
-          ylab("Width predicted") + theme_light()
-        ggsave(paste0("gom_", i, ".png"))
+          geom_point(temp_data, mapping = aes(x = DOY, y = Width, alpha = note)) +
+          ylab("Width predicted") + theme_light() + guides(alpha = "none")
+
+        ggsave(paste0("gom_", i, ".png"), width = 7, height = 6)
       }
 
     } else {
@@ -317,10 +341,12 @@ if (current_fitting_method == "gompertz"){
           b_holder = b_holder + 1
 
           if (fitted_save == TRUE){
+
             ggplot(temp_data, aes(x = DOY, y = Width_pred)) + geom_line() +
-              geom_point(temp_data, mapping = aes(x = DOY, y = Width)) +
-              ylab("Width predicted") + theme_light()
-            ggsave(paste0("gom_", i, ".png"))
+              geom_point(temp_data, mapping = aes(x = DOY, y = Width, alpha = note)) +
+              ylab("Width predicted") + theme_light() + guides(alpha = "none")
+
+            ggsave(paste0("gom_", i, ".png"), width = 7, height = 6)
           }
 
           list_solution_a[[p2]] <- gom_a
@@ -355,9 +381,11 @@ if (current_fitting_method == "gompertz"){
 
     for (i in unique_keys){
 
-
     temp_data <- data_trees[data_trees$key == i,]
     temp_neurons <- data_neurons[data_neurons$key == i, ]
+
+    # specify the measurement type - so we can distinguish from added zeros
+    temp_data$note <- "raw measurement"
 
       # add zeros at the beginning
     if (add_zeros == TRUE){
@@ -387,6 +415,7 @@ if (current_fitting_method == "gompertz"){
       new_rows <- do.call(rbind, row_list)
       new_rows$DOY <- c(1:min_DOY)
       new_rows$Width <- 0
+      new_rows$note <- "added zero"
       temp_data <- rbind(new_rows, temp_data)
 
     }
@@ -397,10 +426,10 @@ if (current_fitting_method == "gompertz"){
       temp_data$Width_pred <- predict(output)
 
       # Prediction for DOY 1 must always be 0
-      temp_data[1, "Width_pred"] <- 0
+      # temp_data[1, "Width_pred"] <- 0
 
-      plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-      lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+      # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       if (post_process == TRUE){
 
@@ -461,8 +490,8 @@ if (current_fitting_method == "gompertz"){
       }
     }
 
-      plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-      lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+      # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       temp_data$first_diff <- NULL
       temp_data$method <- "brnn"
@@ -471,10 +500,12 @@ if (current_fitting_method == "gompertz"){
       b_holder = b_holder + 1
 
       if (fitted_save == TRUE){
+
         ggplot(temp_data, aes(x = DOY, y = Width_pred)) + geom_line() +
-          geom_point(temp_data, mapping = aes(x = DOY, y = Width)) +
-          ylab("Width predicted") + theme_light()
-        ggsave(paste0("brnn_", i, ".png"))
+          geom_point(temp_data, mapping = aes(x = DOY, y = Width, alpha = note)) +
+          ylab("Width predicted") + theme_light() + guides(alpha = "none")
+
+        ggsave(paste0("brnn_", i, ".png"), width = 7, height = 6)
       }
 
     }
@@ -488,6 +519,9 @@ if (current_fitting_method == "gompertz"){
 
       gam_k <- temp_parameters$gam_k
       gam_sp <- temp_parameters$gam_sp
+
+      # specify the measurement type - so we can distinguish from added zeros
+      temp_data$note <- "raw measurement"
 
       # add zeros at the beggining
     if(add_zeros == TRUE){
@@ -516,6 +550,7 @@ if (current_fitting_method == "gompertz"){
       new_rows <- do.call(rbind, row_list)
       new_rows$DOY <- c(1:min_DOY)
       new_rows$Width <- 0
+      new_rows$note <- "added zero"
 
       temp_data <- rbind(new_rows, temp_data)
       temp_data$Width <- as.numeric(temp_data$Width)
@@ -526,8 +561,8 @@ if (current_fitting_method == "gompertz"){
 
       temp_data$Width_pred <- predict(output)
 
-       plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-       lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+      # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       if (post_process == TRUE){
 
@@ -590,8 +625,8 @@ if (current_fitting_method == "gompertz"){
 
         }
 
-       plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-       lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+       # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+       # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       }
 
@@ -601,10 +636,12 @@ if (current_fitting_method == "gompertz"){
       b_holder = b_holder + 1
 
       if (fitted_save == TRUE){
-        ggplot(temp_data, aes(x = DOY, y = Width_pred)) +
-          geom_line() + geom_point(temp_data, mapping = aes(x = DOY, y = Width)) +
-          ylab("Width predicted") + theme_light()
-        ggsave(paste0("gam_", i, ".png"))
+
+        ggplot(temp_data, aes(x = DOY, y = Width_pred)) + geom_line() +
+          geom_point(temp_data, mapping = aes(x = DOY, y = Width, alpha = note)) +
+          ylab("Width predicted") + theme_light() + guides(alpha = "none")
+
+        ggsave(paste0("gam_", i, ".png"), width = 7, height = 6)
       }
     }
 
@@ -620,7 +657,6 @@ if (current_fitting_method == "gompertz"){
   output_list <- list(fitted = do.call(rbind, list_temps),
                       gompertz_grid_search = final_parameters,
                       gompertz_grid_search_errors = errors_grid
-
                       )
 
   class(output_list) <- "xpsg"
