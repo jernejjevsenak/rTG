@@ -3,7 +3,7 @@ S3method(plot, "xpsg")
 S3method(summary, "xpsg")
 
 import(ggplot2)
-import(knitr)
+importFrom("knitr", "knit")
 importFrom("stats", "nls", "nls.control", "predict")
 importFrom("utils", "capture.output", "setTxtProgressBar", "txtProgressBar")
 importFrom("brnn", "brnn", "predict.brnn")

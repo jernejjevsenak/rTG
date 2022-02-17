@@ -30,6 +30,15 @@
 #' the BRNN method
 #' @param gam_k numeric, the parameter k for General Additive Model (GAM)
 #' @param gam_sp numeric, the parameter sp for General Additive Model (GAM)
+#' @param gom_a_range a numerical vector of the possible values of the
+#' parameter a, which is considered in the search for the initial Gompertz
+#' parameter values
+#' @param gom_b_range a numerical vector of the possible values of the
+#' parameter b, which is considered in the search for the initial Gompertz
+#' parameter values
+#' @param gom_k_range a numerical vector of the possible values of the
+#' parameter k, which is considered in the search for the initial Gompertz
+#' parameter values
 #'
 #' @return a list with the following elements:
 #' \enumerate{
@@ -67,7 +76,10 @@ XPSgrowth <- function(data_trees, parameters = NULL,
                  unified_parameters = FALSE,
                  gom_a = NA, gom_b = NA, gom_k = NA,
                  brnn_neurons = NA,
-                 gam_k = NA, gam_sp = NA){
+                 gam_k = NA, gam_sp = NA,
+                 gom_a_range = c(3000), gom_b_range = seq(50, 1000, 50),
+                 gom_k_range = seq(1, 500, 2)
+                 ){
 
   # Defining global variables
   Width <- NULL
@@ -224,10 +236,6 @@ for (ut in fitting_method){
 if (current_fitting_method == "gompertz"){
 
   for (i in unique_keys){
-
-    gom_a_range <- 3000
-    gom_b_range <- seq(50, 1000, 50)
-    gom_k_range <- seq(1, 500, 2)
 
     par_grid <- expand.grid(gom_a = gom_a_range,
                             gom_b = gom_b_range,
