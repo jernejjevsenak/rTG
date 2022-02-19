@@ -297,6 +297,8 @@ if (current_fitting_method == "gompertz"){
 
       temp_data$Width_pred <- predict(output)
 
+      temp_data <- dplyr::arrange(temp_data, DOY)
+
       # all what is below 0.1 goes to 0
       if (post_process == TRUE){
       temp_data$Width_pred <- ifelse(temp_data$Width_pred  < 0.01, 0,
@@ -341,6 +343,8 @@ if (current_fitting_method == "gompertz"){
         if (class(output) == "nls"){
 
           temp_data$Width_pred <- predict(output)
+
+          temp_data <- dplyr::arrange(temp_data, DOY)
 
           temp_data$method <- "gompertz"
           temp_data$first_diff <- NULL
@@ -429,9 +433,11 @@ if (current_fitting_method == "gompertz"){
     }
 
       capture.output(output <- try(brnn(Width ~ DOY, data = temp_data,
-                     neurons = temp_neurons$brnn_neurons), silent=TRUE))
+                     neurons = temp_neurons$brnn_neurons[1]), silent=TRUE))
 
       temp_data$Width_pred <- predict(output)
+
+      temp_data <- dplyr::arrange(temp_data, DOY)
 
       # Prediction for DOY 1 must always be 0
       # temp_data[1, "Width_pred"] <- 0
@@ -564,10 +570,12 @@ if (current_fitting_method == "gompertz"){
       temp_data$Width <- as.numeric(temp_data$Width)
     }
 
-      output <- gam(Width ~ s(DOY, k = gam_k, bs ="ps", sp = gam_sp),
+      output <- gam(Width ~ s(DOY, k = gam_k[1], bs ="ps", sp = gam_sp[1]),
                     data = temp_data, method = "REML")
 
       temp_data$Width_pred <- predict(output)
+
+      temp_data <- dplyr::arrange(temp_data, DOY)
 
       # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
       # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
