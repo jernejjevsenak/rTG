@@ -77,7 +77,8 @@ XPSgrowth <- function(data_trees, parameters = NULL,
                  gom_a = NA, gom_b = NA, gom_k = NA,
                  brnn_neurons = NA,
                  gam_k = NA, gam_sp = NA,
-                 gom_a_range = c(3000), gom_b_range = seq(50, 1000, 50),
+                 gom_a_range = c(1, 3000, 500),
+                 gom_b_range = seq(1, 1000, 50),
                  gom_k_range = seq(1, 500, 2)
                  ){
 
@@ -432,18 +433,53 @@ if (current_fitting_method == "gompertz"){
 
     }
 
-      capture.output(output <- try(brnn(Width ~ DOY, data = temp_data,
-                     neurons = temp_neurons$brnn_neurons[1]), silent=TRUE))
 
-      temp_data$Width_pred <- predict(output)
+
+       capture.output(output <- try(brnn(Width ~ DOY, data = temp_data,
+                      neurons = temp_neurons$brnn_neurons[1]), silent=TRUE))
+       temp_data$Width_pred <- predict(output)
+
+
+
+
+
+
+      # capture.output(output <- try(neuralnet(Width ~ DOY, data = temp_data,
+      #                                  hidden = 1), silent=TRUE))
+
+      # output <- try(train(Width ~ DOY, data = temp_data,
+      #                    method = "neuralnet",
+      #                    tuneGrid = expand.grid(layer1 = c(1,2,3),
+      #                                layer2 = 0,
+      #                                layer3 = 0
+
+      #                                )
+
+
+                          # tuneGrid=data.frame(layer1= c(1,2,3),)
+                          # tuneGrid = c(.layer1 = c(1,2,3))
+      #                    ), silent=TRUE)
+
+
+      # temp_data$Width_pred <- predict(output, newdata = temp_data)
+
+
+
+
+
+
+
+
+
+
 
       temp_data <- dplyr::arrange(temp_data, DOY)
 
       # Prediction for DOY 1 must always be 0
       # temp_data[1, "Width_pred"] <- 0
 
-      # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+       plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+       lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       if (post_process == TRUE){
 
