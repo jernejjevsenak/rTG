@@ -20,7 +20,7 @@
 #' to the first observation in each year. Alternatively, users can specify
 #' absolute DOY prior which zeros will be added.
 #' @param post_process logical, should the post-process algorithm be applied?
-#' @param unified_parameters logical, if FALSE, the algorithm will use only
+#' @param unified_parameters logical, if TRUE, the algorithm will use only
 #' manually selected function parameters. See the arguments 'gom_a', 'gom_b',
 #' 'gom_k', 'brnn_neurons', 'gam_k' and 'gam_sp'. Default is FALSE
 #' @param gom_a numeric, the parameter a for the Gompertz function
@@ -477,9 +477,8 @@ if (current_fitting_method == "gompertz"){
 
       # Prediction for DOY 1 must always be 0
       # temp_data[1, "Width_pred"] <- 0
-
-       plot(y = temp_data$Width, x = temp_data$DOY, main = i)
-       lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
+      # plot(y = temp_data$Width, x = temp_data$DOY, main = i)
+      # lines(y = temp_data$Width_pred, x = temp_data$DOY, type = "l")
 
       if (post_process == TRUE){
 

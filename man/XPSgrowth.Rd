@@ -21,8 +21,8 @@ XPSgrowth(
   brnn_neurons = NA,
   gam_k = NA,
   gam_sp = NA,
-  gom_a_range = c(3000),
-  gom_b_range = seq(50, 1000, 50),
+  gom_a_range = c(1, 3000, 500),
+  gom_b_range = seq(1, 1000, 50),
   gom_k_range = seq(1, 500, 2)
 )
 }
@@ -54,7 +54,7 @@ absolute DOY prior which zeros will be added.}
 
 \item{post_process}{logical, should the post-process algorithm be applied?}
 
-\item{unified_parameters}{logical, if FALSE, the algorithm will use only
+\item{unified_parameters}{logical, if TRUE, the algorithm will use only
 manually selected function parameters. See the arguments 'gom_a', 'gom_b',
 'gom_k', 'brnn_neurons', 'gam_k' and 'gam_sp'. Default is FALSE}
 
