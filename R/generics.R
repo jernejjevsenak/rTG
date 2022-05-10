@@ -3,13 +3,13 @@
 
 plot.xpsg <- function(x, ...){
 
-  DOY <- NULL
-  Width_pred <- NULL
+  doy <- NULL
+  width_pred <- NULL
   key <- NULL
 
-p1 <- ggplot(x[[1]], aes(x = DOY, y = Width_pred, col = key)) +
+  p1 <- ggplot(x[[1]], aes(x = doy, y = width_pred, col = key)) +
         geom_line() + facet_grid(.~method)
 
-return(p1)
+  return(p1)
 
 }

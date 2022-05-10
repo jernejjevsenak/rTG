@@ -4,16 +4,15 @@
 #' three different years, at three sites, each with six trees. Please see
 #' references for details.
 #'
-#' @format A data frame with 945 rows and 8 variables:
+#' @format A data frame with 945 rows and 7 variables:
 #' \describe{
 #'   \item{Tissue}{XYLEM or PHLOEM}
 #'   \item{Species}{Fagus sylvatica (FASY), Picea abies (PIAB), Quercus pubescens (QUPE)}
 #'   \item{Site}{Panska reka (PAN), Karst (KRAS)}
 #'   \item{Year}{2011, 2017}
 #'   \item{Tree}{Tree ID indicators ranging from 1 to 6}
-#'   \item{Sample}{A consecutive number of collected sample}
-#'   \item{DOY}{Day Of a Year}
-#'   \item{Width}{The total number of radial cells / the total ring width}
+#'   \item{doy}{Day Of a Year}
+#'   \item{width}{The total number of radial cells / the total ring width}
 #' }
 #' @source Gričar, J., Prislan, P., De Luis, M., Gryc, V., Hacurová, J.,
 #' Vavrčík, H., Čufar, K., 2015. Plasticity in variation of xylem and phloem

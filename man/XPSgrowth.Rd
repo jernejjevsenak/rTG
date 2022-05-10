@@ -28,13 +28,14 @@ XPSgrowth(
 }
 \arguments{
 \item{data_trees}{a data frame with ID variables and wood formation data with
-columns DOY and Width}
+columns doy and width}
 
 \item{parameters}{a data frame with ID variables and initial parameter values
 for the selected methods}
 
 \item{search_initial_gom}{logical, should the algorithm to search initial
-Gompertz parameters be applied?}
+Gompertz parameters be applied? This argument also overwrites manually
+defined Gompertz parameter values}
 
 \item{fitting_method}{vector of one or more methods to be compared:
 "gompertz", "gam", "brnn"}
@@ -50,7 +51,7 @@ growing season be added?}
 
 \item{add_zeros_before}{if 'min' (character) then zeros will be added prior
 to the first observation in each year. Alternatively, users can specify
-absolute DOY prior which zeros will be added.}
+absolute doy prior which zeros will be added.}
 
 \item{post_process}{logical, should the post-process algorithm be applied?}
 
