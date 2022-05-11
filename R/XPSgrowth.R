@@ -53,9 +53,10 @@
 #' @examples
 #' library(rTG)
 #'
-#' # Load data
+#' # 1 Example on xylem and phloem data
 #' data(parameters)
 #' data(data_trees)
+#'
 #' simulation_1 <- XPSgrowth(data_trees = data_trees,
 #'      parameters = parameters,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
@@ -65,6 +66,20 @@
 #'      add_zeros = TRUE,
 #'      add_zeros_before = 'min',
 #'      post_process = TRUE)
+#'
+#'
+#'
+#' # 2 Example on dendrometer data
+#' data("data_dendrometers")
+#'
+#' simulation_2 <- XPSgrowth(data_dendrometers, unified_parameters = TRUE,
+#'                   ID_vars = c("site", "species", "year", "tree"),
+#'                   fitting_method = c("brnn", "gam", "gompertz"),
+#'                   brnn_neurons = 2, gam_k = 9, gam_sp = 0.5,
+#'                   search_initial_gom = TRUE, add_zeros = FALSE,
+#'                   post_process = TRUE)
+#'
+#' plot(simulation_2)
 
 XPSgrowth <- function(data_trees, parameters = NULL,
                  search_initial_gom = FALSE,

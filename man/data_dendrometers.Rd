@@ -22,7 +22,7 @@ Data belongs to Sergio Rossi
 data_dendrometers
 }
 \description{
-A dataset with dendrometer data from sugar maple and black spruce from
+A data set with dendrometer data from sugar maple and black spruce from
 Simoncouche site, Canada.
 }
 \keyword{datasets}

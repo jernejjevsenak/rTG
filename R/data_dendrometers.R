@@ -1,6 +1,6 @@
 #' data_dendrometers
 #'
-#' A dataset with dendrometer data from sugar maple and black spruce from
+#' A data set with dendrometer data from sugar maple and black spruce from
 #' Simoncouche site, Canada.
 #'
 #' @format A data frame with 718 rows and 6 variables:
