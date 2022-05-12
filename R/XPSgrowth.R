@@ -74,7 +74,7 @@
 #'
 #' simulation_2 <- XPSgrowth(data_dendrometers, unified_parameters = TRUE,
 #'                   ID_vars = c("site", "species", "year", "tree"),
-#'                   fitting_method = c("brnn", "gam", "gompertz"),
+#'                   fitting_method = c("brnn", "gam"),
 #'                   brnn_neurons = 2, gam_k = 9, gam_sp = 0.5,
 #'                   search_initial_gom = TRUE, add_zeros = FALSE,
 #'                   post_process = TRUE)
@@ -321,7 +321,7 @@ if (current_fitting_method == "gompertz"){
     # When all parameters are null, the class can still be nls. Additional check is needed
     parm_test <- c(gom_a, gom_b, gom_k)
 
-    if (class(output) == "nls" & !is.null(parm_test)){
+    if (is(output, "nls") & !is.null(parm_test)){
 
       temp_data$width_pred <- predict(output)
 
@@ -368,7 +368,7 @@ if (current_fitting_method == "gompertz"){
                                       minFactor = 1/1024, printEval = FALSE,
                                       warnOnly = FALSE)), silent=TRUE))
 
-        if (class(output) == "nls"){
+        if (is(output, "nls")){
 
           temp_data$width_pred <- predict(output)
 

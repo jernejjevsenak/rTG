@@ -120,7 +120,7 @@ data("data_dendrometers")
 
 simulation_2 <- XPSgrowth(data_dendrometers, unified_parameters = TRUE,
                   ID_vars = c("site", "species", "year", "tree"),
-                  fitting_method = c("brnn", "gam", "gompertz"),
+                  fitting_method = c("brnn", "gam"),
                   brnn_neurons = 2, gam_k = 9, gam_sp = 0.5,
                   search_initial_gom = TRUE, add_zeros = FALSE,
                   post_process = TRUE)
