@@ -1,3 +1,9 @@
+# rTG 1.0.1
+* dendrometer data is added (see data_dendrometers)
+* new examples are added to the XPSgrowth() description
+* minor modifications allow for more flexible input data structures
+* slightly modified default values of the XPSgrowth() arguments
+
 # rTG 1.0.0
 * The post processing algorithm is improved according to the suggestion from reviewers
 * the generic plot() is now improved, so artificial points are labeled so it can be separated from raw data
