@@ -106,7 +106,7 @@ data(data_trees)
 simulation_1 <- XPSgrowth(data_trees = data_trees,
      parameters = parameters,
      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
-     fitting_method = c("gam", "brnn"),
+     fitting_method = c("brnn"),
      fitted_save = FALSE,
      search_initial_gom = FALSE,
      add_zeros = TRUE,
@@ -124,6 +124,4 @@ simulation_2 <- XPSgrowth(data_dendrometers, unified_parameters = TRUE,
                   brnn_neurons = 2, gam_k = 9, gam_sp = 0.5,
                   search_initial_gom = TRUE, add_zeros = FALSE,
                   post_process = TRUE)
-
-plot(simulation_2)
 }
