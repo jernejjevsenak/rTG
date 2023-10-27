@@ -501,7 +501,6 @@ if (current_fitting_method == "gompertz"){
 
         for (J in 1:nrow(temp_data)){
 
-
           if (temp_data[J, "width_pred"] < 0.0001){
 
             next()
@@ -510,7 +509,7 @@ if (current_fitting_method == "gompertz"){
 
             temp_data[J, "width_pred"] <- temp_data[J - 1, "width_pred"]
 
-          } else if ((temp_data[J, "width_pred"] - temp_data[J - 1, "width_pred"]) < 0){
+          } else if (J != 1 && (temp_data[J, "width_pred"] - temp_data[J - 1, "width_pred"]) < 0){
 
             temp_data[J, "width_pred"] <- temp_data[J - 1, "width_pred"]
 
