@@ -284,7 +284,7 @@ if (current_fitting_method == "gompertz"){
 
       if (add_zeros_before == 'min'){
 
-        min_doy <- min(temp_data$doy)
+        min_doy <- min(temp_data$doy) - 1
 
       } else {
 
@@ -562,7 +562,7 @@ if (current_fitting_method == "gompertz"){
 
       if (add_zeros_before == 'min'){
 
-        min_doy <- min(temp_data$doy)
+        min_doy <- min(temp_data$doy) - 1
 
       } else {
 
