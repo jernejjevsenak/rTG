@@ -18,7 +18,7 @@ LazyData: true
 Suggests: testthat (>= 3.0.0)
 Imports: ggplot2(>= 2.2.0), brnn(>= 0.6), mgcv (>= 1.8-34), knitr(>= 1.19),
     dplyr(>= 0.1.0), magrittr(>= 1.5), methods
-Depends: R(>= 3.5)
+Depends: R(>= 3.5), brnn(>= 0.6)
 URL: https://github.com/jernejjevsenak/rTG
 BugReports: https://github.com/jernejjevsenak/rTG/issues
 NeedsCompilation: no

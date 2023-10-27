@@ -461,6 +461,7 @@ if (current_fitting_method == "gompertz"){
 
       capture.output(output <- try(brnn(width ~ doy, data = temp_data,
                                         neurons = temp_neurons$brnn_neurons[1]), silent=TRUE))
+
       temp_data$width_pred <- predict(output)
 
       temp_data <- dplyr::arrange(temp_data, doy)
