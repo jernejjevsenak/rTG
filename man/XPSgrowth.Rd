@@ -8,6 +8,7 @@ XPSgrowth(
   data_trees,
   parameters = NULL,
   search_initial_gom = FALSE,
+  search_initial_double_gom = FALSE,
   fitting_method = c("gompertz", "GAM", "brnn"),
   ID_vars = NULL,
   fitted_save = FALSE,
@@ -18,12 +19,24 @@ XPSgrowth(
   gom_a = NA,
   gom_b = NA,
   gom_k = NA,
+  d_gom_a1 = NA,
+  d_gom_a2 = NA,
+  d_gom_b1 = NA,
+  d_gom_b2 = NA,
+  d_gom_k1 = NA,
+  d_gom_k2 = NA,
   brnn_neurons = NA,
   gam_k = NA,
   gam_sp = NA,
   gom_a_range = c(1, 3000, 500),
   gom_b_range = seq(1, 1000, 50),
-  gom_k_range = seq(1, 500, 2)
+  gom_k_range = seq(1, 500, 2),
+  d_gom_a1_range = seq(0, 1, by = 0.001),
+  d_gom_a2_range = seq(0, 5, by = 0.01),
+  d_gom_b1_range = seq(0, 5, by = 0.001),
+  d_gom_b2_range = seq(0, 10, by = 0.1),
+  d_gom_k1_range = seq(0, 1, by = 0.001),
+  d_gom_k2_range = seq(0, 1, by = 0.001)
 )
 }
 \arguments{
@@ -37,8 +50,12 @@ for the selected methods}
 Gompertz parameters be applied? This argument also overwrites manually
 defined Gompertz parameter values}
 
+\item{search_initial_double_gom}{logical, should the algorithm to search
+initial parameters for double Gompertz function be applied? This argument
+also overwrites manually defined parameter values for double Gompertz}
+
 \item{fitting_method}{vector of one or more methods to be compared:
-"gompertz", "gam", "brnn"}
+"gompertz", "double_gompertz", "gam", "brnn"}
 
 \item{ID_vars}{character vector of variables which indicate column names of
 ID variables}
@@ -57,13 +74,26 @@ absolute doy prior which zeros will be added.}
 
 \item{unified_parameters}{logical, if TRUE, the algorithm will use only
 manually selected function parameters. See the arguments 'gom_a', 'gom_b',
-'gom_k', 'brnn_neurons', 'gam_k' and 'gam_sp'. Default is FALSE}
+'d_gom_k', 'd_gom_a1', 'd_gom_a2', 'd_gom_b1', 'd_gom_b2', 'd_gom_k1',
+'d_gom_k2', 'brnn_neurons', 'gam_k' and 'gam_sp'. Default is FALSE}
 
 \item{gom_a}{numeric, the parameter a for the Gompertz function}
 
 \item{gom_b}{numeric, the parameter b for the Gompertz function}
 
 \item{gom_k}{numeric, the parameter k for the Gompertz function}
+
+\item{d_gom_a1}{numeric, the parameter a1 for the double Gompertz function}
+
+\item{d_gom_a2}{numeric, the parameter a2 for the double Gompertz function}
+
+\item{d_gom_b1}{numeric, the parameter b1 for the double Gompertz function}
+
+\item{d_gom_b2}{numeric, the parameter b2 for the double Gompertz function}
+
+\item{d_gom_k1}{numeric, the parameter k1 for the double Gompertz function}
+
+\item{d_gom_k2}{numeric, the parameter k2 for the double Gompertz function}
 
 \item{brnn_neurons}{positive integer, the number of neurons to be used by
 the BRNN method}
@@ -83,13 +113,33 @@ parameter values}
 \item{gom_k_range}{a numerical vector of the possible values of the
 parameter k, which is considered in the search for the initial Gompertz
 parameter values}
+
+\item{d_gom_a1_range}{A numerical vector representing the range of potential
+values for the 'a1' parameter within the double Gompertz function.}
+
+\item{d_gom_a2_range}{A numerical vector representing the range of potential
+values for the 'a2' parameter within the double Gompertz function.}
+
+\item{d_gom_b1_range}{A numerical vector representing the range of potential
+values for the 'b1' parameter within the double Gompertz function.}
+
+\item{d_gom_b2_range}{A numerical vector representing the range of potential
+values for the 'b2' parameter within the double Gompertz function.}
+
+\item{d_gom_k1_range}{A numerical vector representing the range of potential
+values for the 'k1' parameter within the double Gompertz function.}
+
+\item{d_gom_k2_range}{A numerical vector representing the range of potential
+values for the 'k2' parameter within the double Gompertz function.}
 }
 \value{
 a list with the following elements:
 \enumerate{
  \item $fitted - a data frame with fitted wood formation data
- \item $gompertz_grid_search - a data frame with selected initial parameter values
- \item $gompertz_grid_search_errors - a data frame with unsuccessful cases of gompertz grid search
+ \item $gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the Gompertz function.
+ \item $gompertz_grid_search_errors - a data frame with unsuccessful cases of Gompertz grid search
+ \item $double_gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the double Gompertz function.
+ \item $double_gompertz_grid_search_errors - a data frame with unsuccessful cases of double Gompertz grid search
 }
 }
 \description{
@@ -109,6 +159,16 @@ simulation_1 <- XPSgrowth(data_trees = data_trees,
      fitting_method = c("brnn"),
      fitted_save = FALSE,
      search_initial_gom = FALSE,
+     add_zeros = TRUE,
+     add_zeros_before = 'min',
+     post_process = TRUE)
+
+simulation_1 <- XPSgrowth(data_trees = data_trees,
+     parameters = parameters,
+     ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
+     fitting_method = c("double_gompertz"),
+     fitted_save = FALSE,
+     search_initial_double_gom = TRUE,
      add_zeros = TRUE,
      add_zeros_before = 'min',
      post_process = TRUE)

@@ -9,8 +9,11 @@
 #' @param search_initial_gom logical, should the algorithm to search initial
 #' Gompertz parameters be applied? This argument also overwrites manually
 #' defined Gompertz parameter values
+#' @param search_initial_double_gom logical, should the algorithm to search
+#' initial parameters for double Gompertz function be applied? This argument
+#' also overwrites manually defined parameter values for double Gompertz
 #' @param fitting_method vector of one or more methods to be compared:
-#' "gompertz", "gam", "brnn"
+#' "gompertz", "double_gompertz", "gam", "brnn"
 #' @param ID_vars character vector of variables which indicate column names of
 #' ID variables
 #' @param fitted_save logical, should the fitted curves be saved in current
@@ -23,10 +26,17 @@
 #' @param post_process logical, should the post-process algorithm be applied?
 #' @param unified_parameters logical, if TRUE, the algorithm will use only
 #' manually selected function parameters. See the arguments 'gom_a', 'gom_b',
-#' 'gom_k', 'brnn_neurons', 'gam_k' and 'gam_sp'. Default is FALSE
+#' 'd_gom_k', 'd_gom_a1', 'd_gom_a2', 'd_gom_b1', 'd_gom_b2', 'd_gom_k1',
+#' 'd_gom_k2', 'brnn_neurons', 'gam_k' and 'gam_sp'. Default is FALSE
 #' @param gom_a numeric, the parameter a for the Gompertz function
 #' @param gom_b numeric, the parameter b for the Gompertz function
 #' @param gom_k numeric, the parameter k for the Gompertz function
+#' @param d_gom_a1 numeric, the parameter a1 for the double Gompertz function
+#' @param d_gom_a2 numeric, the parameter a2 for the double Gompertz function
+#' @param d_gom_b1 numeric, the parameter b1 for the double Gompertz function
+#' @param d_gom_b2 numeric, the parameter b2 for the double Gompertz function
+#' @param d_gom_k1 numeric, the parameter k1 for the double Gompertz function
+#' @param d_gom_k2 numeric, the parameter k2 for the double Gompertz function
 #' @param brnn_neurons positive integer, the number of neurons to be used by
 #' the BRNN method
 #' @param gam_k numeric, the parameter k for General Additive Model (GAM)
@@ -40,12 +50,26 @@
 #' @param gom_k_range a numerical vector of the possible values of the
 #' parameter k, which is considered in the search for the initial Gompertz
 #' parameter values
+#' @param d_gom_a1_range A numerical vector representing the range of potential
+#' values for the 'a1' parameter within the double Gompertz function.
+#' @param d_gom_a2_range A numerical vector representing the range of potential
+#' values for the 'a2' parameter within the double Gompertz function.
+#' @param d_gom_b1_range A numerical vector representing the range of potential
+#' values for the 'b1' parameter within the double Gompertz function.
+#' @param d_gom_b2_range A numerical vector representing the range of potential
+#' values for the 'b2' parameter within the double Gompertz function.
+#' @param d_gom_k1_range A numerical vector representing the range of potential
+#' values for the 'k1' parameter within the double Gompertz function.
+#' @param d_gom_k2_range A numerical vector representing the range of potential
+#' values for the 'k2' parameter within the double Gompertz function.
 #'
 #' @return a list with the following elements:
 #' \enumerate{
 #'  \item $fitted - a data frame with fitted wood formation data
-#'  \item $gompertz_grid_search - a data frame with selected initial parameter values
-#'  \item $gompertz_grid_search_errors - a data frame with unsuccessful cases of gompertz grid search
+#'  \item $gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the Gompertz function.
+#'  \item $gompertz_grid_search_errors - a data frame with unsuccessful cases of Gompertz grid search
+#'  \item $double_gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the double Gompertz function.
+#'  \item $double_gompertz_grid_search_errors - a data frame with unsuccessful cases of double Gompertz grid search
 #'}
 #'
 #' @export
@@ -67,6 +91,16 @@
 #'      add_zeros_before = 'min',
 #'      post_process = TRUE)
 #'
+#' simulation_1 <- XPSgrowth(data_trees = data_trees,
+#'      parameters = parameters,
+#'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
+#'      fitting_method = c("double_gompertz"),
+#'      fitted_save = FALSE,
+#'      search_initial_double_gom = TRUE,
+#'      add_zeros = TRUE,
+#'      add_zeros_before = 'min',
+#'      post_process = TRUE)
+#'
 #'
 #'
 #' # 2 Example on dendrometer data
@@ -82,6 +116,7 @@
 
 XPSgrowth <- function(data_trees, parameters = NULL,
                  search_initial_gom = FALSE,
+                 search_initial_double_gom = FALSE,
                  fitting_method = c("gompertz", "GAM", "brnn"),
                  ID_vars = NULL,
                  fitted_save = FALSE,
@@ -90,11 +125,20 @@ XPSgrowth <- function(data_trees, parameters = NULL,
                  post_process = TRUE,
                  unified_parameters = FALSE,
                  gom_a = NA, gom_b = NA, gom_k = NA,
+                 d_gom_a1 = NA, d_gom_a2 = NA,
+                 d_gom_b1 = NA, d_gom_b2 = NA,
+                 d_gom_k1 = NA, d_gom_k2 = NA,
                  brnn_neurons = NA,
                  gam_k = NA, gam_sp = NA,
-                 gom_a_range = c(1, 3000, 500),
-                 gom_b_range = seq(1, 1000, 50),
-                 gom_k_range = seq(1, 500, 2)
+                 gom_a_range = c(0, 3000, 500),
+                 gom_b_range = seq(0, 1000, 50),
+                 gom_k_range = seq(0, 500, 2),
+                 d_gom_a1_range = seq(0, 1, by = 0.001),
+                 d_gom_a2_range = seq(0, 5, by = 0.01),
+                 d_gom_b1_range = seq(0, 5, by = 0.001),
+                 d_gom_b2_range = seq(0, 10, by = 0.1),
+                 d_gom_k1_range = seq(0, 1, by = 0.001),
+                 d_gom_k2_range = seq(0, 1, by = 0.001)
                  ){
 
   # Defining global variables
@@ -109,6 +153,8 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   setTxtProgressBar <- NULL
   lines <- NULL
   note <- NULL
+  nls.lm.control <- NULL
+  nlsLM <- NULL
 
   # Progress bar
   pb <- txtProgressBar(min = 0, max = length(fitting_method), style = 3)
@@ -169,6 +215,18 @@ XPSgrowth <- function(data_trees, parameters = NULL,
     }
 
 
+    if ("double_gompertz" %in% fitting_method){
+
+      tm_d_g_p <- c(d_gom_a1, d_gom_a2, d_gom_b1, d_gom_b2, d_gom_k1, d_gom_k2)
+
+      if (sum(is.na(tm_d_g_p) > 0) & search_initial_double_gom == FALSE){
+
+        stop("If unified_parameters is used, you must provide double Gompertz parameters")
+
+      }
+    }
+
+
     if ("brnn" %in% fitting_method){
 
       if (sum(is.na(brnn_neurons) > 0)){
@@ -214,6 +272,12 @@ XPSgrowth <- function(data_trees, parameters = NULL,
     parameters$gom_a <- gom_a
     parameters$gom_b <- gom_b
     parameters$gom_k <- gom_k
+    parameters$d_gom_a1 <- d_gom_a1
+    parameters$d_gom_a2 <- d_gom_a2
+    parameters$d_gom_b1 <- d_gom_b1
+    parameters$d_gom_b2 <- d_gom_b2
+    parameters$d_gom_k1 <- d_gom_k1
+    parameters$d_gom_k2 <- d_gom_k2
     parameters$brnn_neurons <- brnn_neurons
     parameters$gam_k <- gam_k
     parameters$gam_sp <- gam_sp
@@ -242,10 +306,24 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   list_solution_b <- list()
   list_solution_k <- list()
 
+  # double Gompertz
+  list_errors_dg <- list()
+  list_solutions_dg <- list()
+  list_solution_a1 <- list()
+  list_solution_a2 <- list()
+  list_solution_b1 <- list()
+  list_solution_b2 <- list()
+  list_solution_k1 <- list()
+  list_solution_k2 <- list()
+  p3 = 1; p4 = 1
+
   # I define those two objects as NA
   # If grid search is used, they are overwritten
   errors_grid <- NA
   final_parameters <- NA
+
+  errors_grid_dg <- NA
+  final_parameters_dg <- NA
 
   b_holder = 1
   p = 1
@@ -414,6 +492,251 @@ if (current_fitting_method == "gompertz"){
   # remove solutions from errors grid
   errors_grid <- errors_grid[!(errors_grid %in% solutions)]
 
+} else if (current_fitting_method == "double_gompertz"){
+
+  # here we reduce the number of parameter combinations
+  d_gom_a1_range <- d_gom_a1_range[sample(length(d_gom_a1_range), 25)]
+  d_gom_a2_range <- d_gom_a2_range[sample(length(d_gom_a2_range), 25)]
+  d_gom_b1_range <- d_gom_b1_range[sample(length(d_gom_b1_range), 25)]
+  d_gom_b2_range <- d_gom_b2_range[sample(length(d_gom_b2_range), 25)]
+  d_gom_k1_range <- d_gom_k1_range[sample(length(d_gom_k1_range), 25)]
+  d_gom_k2_range <- d_gom_k2_range[sample(length(d_gom_k2_range), 25)]
+
+  par_grid <- expand.grid(d_gom_a1 = d_gom_a1_range,
+                          d_gom_a2 = d_gom_a2_range,
+                          d_gom_b1 = d_gom_b1_range,
+                          d_gom_b2 = d_gom_b2_range,
+                          d_gom_k1 = d_gom_k1_range,
+                          d_gom_k2 = d_gom_k2_range)
+
+  # I select randomly 10,000 rows to reduce the computation time
+  random_rows <- sample(nrow(par_grid), min(10000, nrow(par_grid)))
+  par_grid <- par_grid[random_rows, ]
+
+
+  for (i in unique_keys){
+
+  temp_parameters <- parameters[parameters$key == i,]
+
+  d_gom_a1 <- temp_parameters$d_gom_a1
+  d_gom_a2 <- temp_parameters$d_gom_a2
+  d_gom_b1 <- temp_parameters$d_gom_b1
+  d_gom_b2 <- temp_parameters$d_gom_b2
+  d_gom_k1 <- temp_parameters$d_gom_k1
+  d_gom_k2 <- temp_parameters$d_gom_k2
+
+  temp_data <- data_trees[data_trees$key == i,]
+
+  # specify the measurement type - so we can distinguish from added zeros
+  temp_data$note <- "raw measurement"
+
+  # add zeros at the beginning
+  if(add_zeros == TRUE){
+
+    if (add_zeros_before == 'min'){
+
+      min_doy <- min(temp_data$doy) - 1
+
+    } else {
+
+      if (!is.numeric(add_zeros_before) & add_zeros_before < 0){
+
+        stop("The argument 'add_zeros_before' should be numeric and greater than 0")
+
+      }
+
+      min_doy <- add_zeros_before
+
+    }
+
+    row_list <- list()
+    for (J in 1:min_doy){
+      temp_row <- temp_data[1,]
+      row_list[[J]] <- temp_row
+    }
+
+    new_rows <- do.call(rbind, row_list)
+    new_rows$doy <- c(1:min_doy)
+    new_rows$width <- 0
+    new_rows$note <- "added zero"
+    temp_data <- rbind(new_rows, temp_data)
+  }
+
+  capture.output(output <- try(nlsLM(y ~ double_gompertz(x, a1, b1, k1, a2, b2, k2),
+                   start = c(a1 = d_gom_a1, a2 = d_gom_a2,
+                             b1 = d_gom_b1, b2 = d_gom_b2,
+                             k1 = d_gom_k1, k2 = d_gom_k2),
+                   data = temp_data,
+                   control = nls.lm.control(maxiter = 1000)), silent = TRUE) )
+
+  # When all parameters are null, the class can still be nls. Additional check is needed
+  parm_test <- c(d_gom_a1, d_gom_a2,
+                 d_gom_b1, d_gom_b2,
+                 d_gom_k1, d_gom_k2)
+
+  if (is(output, "nls") & !is.null(parm_test)){
+
+    temp_data$width_pred <- predict(output)
+
+    temp_data <- dplyr::arrange(temp_data, doy)
+
+    # all what is below 0.1 goes to 0
+    if (post_process == TRUE){
+      temp_data$width_pred <- ifelse(temp_data$width_pred  < 0.01, 0,
+                                     temp_data$width_pred)
+    }
+
+    temp_data$method <- "double_gompertz"
+
+    list_temps[[b_holder]] <- temp_data
+    b_holder = b_holder + 1
+
+    if (fitted_save == TRUE){
+
+      ggplot(temp_data, aes(x = doy, y = width_pred)) + geom_line() +
+        geom_point(temp_data, mapping = aes(x = doy, y = width, alpha = note)) +
+        ylab("width predicted") + theme_light() + guides(alpha = "none")
+
+      ggsave(paste0("d_gom_", i, ".png"), width = 7, height = 6)
+    }
+
+  } else {
+
+    list_errors_dg[[p4]] <- i
+    p4 = p4 + 1
+
+    if (search_initial_double_gom == TRUE){
+
+      # print("Searching for initial Gompertz parameters... This might take some time")
+
+      for (ii in 1:nrow(par_grid)){
+
+        d_gom_a1 <- par_grid$d_gom_a1[ii]
+        d_gom_a2 <- par_grid$d_gom_a2[ii]
+        d_gom_b1 <- par_grid$d_gom_b1[ii]
+        d_gom_b2 <- par_grid$d_gom_b2[ii]
+        d_gom_k1 <- par_grid$d_gom_k1[ii]
+        d_gom_k2 <- par_grid$d_gom_k2[ii]
+
+        capture.output(output <- try(minpack.lm::nlsLM(width ~ double_gompertz(doy, a1, b1, k1, a2, b2, k2),
+                                        start = c(a1 = d_gom_a1, a2 = d_gom_a2,
+                                                  b1 = d_gom_b1, b2 = d_gom_b2,
+                                                  k1 = d_gom_k1, k2 = d_gom_k2),
+                                        data = temp_data,
+                                        control = minpack.lm::nls.lm.control(maxiter = 1000)), silent = TRUE) )
+
+        if (is(output, "nls")){
+
+          temp_data$width_pred <- predict(output)
+
+          temp_data <- dplyr::arrange(temp_data, doy)
+
+
+          if (post_process == TRUE){
+
+            avg_fit <- mean(temp_data$width_pred)
+            max_fit <- max(temp_data$width_pred)
+
+            lagged_width_pred <- temp_data$width_pred[-length(temp_data$width_pred)]
+            lagged_width_pred <- c(NA, lagged_width_pred)
+
+            temp_data$first_diff <- temp_data$width_pred - lagged_width_pred
+            temp_data[1, "first_diff"]  <- temp_data[2, "first_diff"]
+
+            # In case of negative predictions
+            if (any(temp_data$width_pred < 0)){
+
+              shortcut1 <- temp_data
+              shortcut1$neg_ind <- ifelse(shortcut1$width_pred < 0, TRUE, FALSE)
+
+              th_doy <- as.numeric(max(shortcut1[shortcut1$neg_ind == TRUE, ][, "doy"]))
+
+              temp_data$width_pred <- ifelse(temp_data$doy <= th_doy, 0,
+                                             temp_data$width_pred)
+            }
+
+            temp_data$width_pred <- ifelse(temp_data$first_diff < 0 &
+                                             (temp_data$width_pred < avg_fit), 0,
+                                           ifelse(temp_data$width_pred < 0, 0,
+                                                  temp_data$width_pred))
+
+            test <- temp_data[temp_data$width_pred > avg_fit, ]
+            test <- test[test$first_diff < 0, ]
+
+            if (sum(test$first_diff < 0, na.rm = TRUE) > 0){
+
+              for (J in 1:nrow(temp_data)){
+
+                if (temp_data[J, "width_pred"] < 0.0001){
+
+                  next()
+
+                } else if (temp_data[J, "first_diff"] < 0){
+
+                  temp_data[J, "width_pred"] <- temp_data[J - 1, "width_pred"]
+
+                } else if (J != 1 && (temp_data[J, "width_pred"] - temp_data[J - 1, "width_pred"]) < 0){
+
+                  temp_data[J, "width_pred"] <- temp_data[J - 1, "width_pred"]
+
+                } else {
+
+                  temp_data[J, "width_pred"] <- temp_data[J, "width_pred"]
+
+                }
+
+              }
+
+            }
+          }
+
+          temp_data$method <- "double_gompertz"
+          temp_data$first_diff <- NULL
+
+          list_temps[[b_holder]] <- temp_data
+          b_holder = b_holder + 1
+
+          if (fitted_save == TRUE){
+
+            ggplot(temp_data, aes(x = doy, y = width_pred)) + geom_line() +
+              geom_point(temp_data, mapping = aes(x = doy, y = width, alpha = note)) +
+              ylab("width predicted") + theme_light() + guides(alpha = "none")
+
+            ggsave(paste0("d_gom_", i, ".png"), width = 7, height = 6)
+          }
+
+          list_solution_a1[[p3]] <- d_gom_a1
+          list_solution_a2[[p3]] <- d_gom_a2
+          list_solution_b1[[p3]] <- d_gom_b1
+          list_solution_b2[[p3]] <- d_gom_b2
+          list_solution_k1[[p3]] <- d_gom_k1
+          list_solution_k2[[p3]] <- d_gom_k2
+          list_solutions_dg[[p3]] <- i
+          p3 <- p3 + 1
+
+          break()
+        }
+      }
+    }
+  }
+}
+
+     errors_grid_dg <- c(do.call(rbind, list_errors_dg))
+     solutions_dg <- c(do.call(rbind, list_solutions_dg))
+
+     final_parameters_dg <- data.frame(
+       solutions_double_gompertz = c(do.call(rbind, list_solutions_dg)),
+       solution_a1 = c(do.call(rbind, list_solution_a1)),
+       solution_a2 = c(do.call(rbind, list_solution_a2)),
+       solution_b1 = c(do.call(rbind, list_solution_b1)),
+       solution_b2 = c(do.call(rbind, list_solution_b2)),
+       solution_k1 = c(do.call(rbind, list_solution_k1)),
+       solution_k2 = c(do.call(rbind, list_solution_k2))
+     )
+
+     # remove solutions from errors grid
+     errors_grid_dg <- errors_grid_dg[!(errors_grid_dg %in% solutions_dg)]
+
   } else if (current_fitting_method == "brnn"){
 
     data_neurons <- parameters[,c("key", "brnn_neurons")][!is.na(parameters$key),]
@@ -524,9 +847,6 @@ if (current_fitting_method == "gompertz"){
       }
     }
 
-      # plot(y = temp_data$width, x = temp_data$doy, main = i)
-      # lines(y = temp_data$width_pred, x = temp_data$doy, type = "l")
-
       temp_data$first_diff <- NULL
       temp_data$method <- "brnn"
 
@@ -543,6 +863,7 @@ if (current_fitting_method == "gompertz"){
       }
 
     }
+
   } else if (current_fitting_method == "gam"){
 
     for (i in unique_keys){
@@ -596,9 +917,6 @@ if (current_fitting_method == "gompertz"){
       temp_data$width_pred <- predict(output)
 
       temp_data <- dplyr::arrange(temp_data, doy)
-
-      # plot(y = temp_data$width, x = temp_data$doy, main = i)
-      # lines(y = temp_data$width_pred, x = temp_data$doy, type = "l")
 
       if (post_process == TRUE){
 
@@ -692,7 +1010,11 @@ if (current_fitting_method == "gompertz"){
 
   output_list <- list(fitted = do.call(rbind, list_temps),
                       gompertz_grid_search = final_parameters,
-                      gompertz_grid_search_errors = errors_grid
+                      gompertz_grid_search_errors = errors_grid,
+
+                      double_gompertz_grid_search = final_parameters_dg,
+                      double_gompertz_grid_search_errors = errors_grid_dg
+
                       )
 
   class(output_list) <- "xpsg"
@@ -700,7 +1022,6 @@ if (current_fitting_method == "gompertz"){
   return(output_list)
 
 }
-
 
 
 
