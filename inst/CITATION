@@ -2,16 +2,16 @@ citHeader("To cite rTG in publications, please use:")
 
 citEntry(entry = "Article",
 title        = "Modelling seasonal dynamics of secondary growth with the rTG (radial Tree Growth) R package",
-author       = personList(as.person("Jevsenak J."), as.person("Gricar J."), as.person("Rossi S."), as.person("Prislan P.")),
+author       = c("Jevsenak J., Gričar J., Rossi S., Prislan P."),
 journal      = "Ecography",
-volume       = "",
+volume       = "e06030",
 pages        = "",
-year         = "in preparation",
-doi          = "",
+year         = "2022",
+doi          = "https://doi.org/10.1111/ecog.06030",
 
 textVersion  =
-paste("Jevšenak J., Gričar J., Rossi S., and Prislan P., in preparation.",
+paste("Jevšenak J., Gričar J., Rossi S., and Prislan P., 2022.",
     "Modelling seasonal dynamics of secondary growth with the rTG (radial Tree Growth) R package.",
-    "Ecography.")
+    "Ecography: e06030")
 )
 
