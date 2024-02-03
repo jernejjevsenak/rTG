@@ -92,16 +92,26 @@
 #'      add_zeros_before = 'min',
 #'      post_process = TRUE)
 #'
-#' # 1b Example on Double Gompertz function
+#' \dontrun{
+#'
+#' #' # 1b Example on Double Gompertz function
+#'
+#' data_trees <- data_trees[c(1:27),]
+#'
 #' simulation_1b <- XPSgrowth(data_trees = data_trees,
 #'      parameters = parameters,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
 #'      fitting_method = c("double_gompertz"),
 #'      fitted_save = FALSE,
 #'      search_initial_double_gom = FALSE,
+#'      unified_parameters = TRUE,
 #'      add_zeros = TRUE,
 #'      add_zeros_before = 'min',
+#'      d_gom_a1 = 0.204, d_gom_a2 = 0.240,
+#'      d_gom_b1 = 2.433, d_gom_b2 = 2.900,
+#'      d_gom_k1 = 0.974, d_gom_k2 = 0.963,
 #'      post_process = TRUE)
+#' }
 #'
 #' # 2 Example on dendrometer data
 #' data("data_dendrometers")
@@ -331,8 +341,6 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   pbar_holder = 1
 
   unique_keys <- unique(data_trees$key)
-
-  print("I am here")
 
 for (ut in fitting_method){
 
