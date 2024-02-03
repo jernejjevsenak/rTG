@@ -80,6 +80,7 @@
 #' # 1 Example on xylem and phloem data
 #' data(parameters)
 #' data(data_trees)
+#' data_trees <- data_trees[c(1:27),]
 #'
 #' # 1a Example using neural network
 #' simulation_1a <- XPSgrowth(data_trees = data_trees,
@@ -93,14 +94,10 @@
 #'      post_process = TRUE)
 #'
 #' \dontrun{
-#'
 #' #' # 1b Example on Double Gompertz function
-#'
-#' data_trees <- data_trees[c(1:27),]
-#'
 #' simulation_1b <- XPSgrowth(data_trees = data_trees,
 #'      parameters = parameters,
-#'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
+#'      ID_vars = c("Species", "Tissue", "Site", "Year"),
 #'      fitting_method = c("double_gompertz"),
 #'      fitted_save = FALSE,
 #'      search_initial_double_gom = FALSE,
