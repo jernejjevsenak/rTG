@@ -81,7 +81,8 @@
 #' data(parameters)
 #' data(data_trees)
 #'
-#' simulation_1 <- XPSgrowth(data_trees = data_trees,
+#' # 1a Example using neural network
+#' simulation_1a <- XPSgrowth(data_trees = data_trees,
 #'      parameters = parameters,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
 #'      fitting_method = c("brnn"),
@@ -91,7 +92,8 @@
 #'      add_zeros_before = 'min',
 #'      post_process = TRUE)
 #'
-#' simulation_1 <- XPSgrowth(data_trees = data_trees,
+#' # 1b Example on Double Gompertz function
+#' simulation_1b <- XPSgrowth(data_trees = data_trees,
 #'      parameters = parameters,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
 #'      fitting_method = c("double_gompertz"),
@@ -100,8 +102,6 @@
 #'      add_zeros = TRUE,
 #'      add_zeros_before = 'min',
 #'      post_process = TRUE)
-#'
-#'
 #'
 #' # 2 Example on dendrometer data
 #' data("data_dendrometers")

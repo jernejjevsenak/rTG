@@ -1,7 +1,6 @@
 Dear CRAN, 
 
-This is a regular update of the rTG package. The application of XPSgrwoth() is now demonstrated also with dendrometer data.
-Some minor modifications include more flexible input parameters and structures.
+This is a regular update of the rTG package. In this version, I have expanded the functionality of the XPSgrowth() by incorporating the Double Gompertz function as an additional option for users.
 
 Best,
 Jernej 

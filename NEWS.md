@@ -1,3 +1,6 @@
+# rTG 1.0.2
+* Dobule Gompertz function is implemented as an alternative option for model fitting
+
 # rTG 1.0.1
 * dendrometer data is added (see data_dendrometers)
 * new examples are added to the XPSgrowth() description
