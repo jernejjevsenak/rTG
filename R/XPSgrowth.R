@@ -98,7 +98,7 @@
 #'      ID_vars = c("Species", "Tissue", "Site", "Year", "Tree"),
 #'      fitting_method = c("double_gompertz"),
 #'      fitted_save = FALSE,
-#'      search_initial_double_gom = TRUE,
+#'      search_initial_double_gom = FALSE,
 #'      add_zeros = TRUE,
 #'      add_zeros_before = 'min',
 #'      post_process = TRUE)
@@ -331,6 +331,8 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   pbar_holder = 1
 
   unique_keys <- unique(data_trees$key)
+
+  print("I am here")
 
 for (ut in fitting_method){
 
@@ -1011,11 +1013,8 @@ if (current_fitting_method == "gompertz"){
   output_list <- list(fitted = do.call(rbind, list_temps),
                       gompertz_grid_search = final_parameters,
                       gompertz_grid_search_errors = errors_grid,
-
                       double_gompertz_grid_search = final_parameters_dg,
-                      double_gompertz_grid_search_errors = errors_grid_dg
-
-                      )
+                      double_gompertz_grid_search_errors = errors_grid_dg)
 
   class(output_list) <- "xpsg"
 
