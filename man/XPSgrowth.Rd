@@ -28,9 +28,9 @@ XPSgrowth(
   brnn_neurons = NA,
   gam_k = NA,
   gam_sp = NA,
-  gom_a_range = c(0, 3000, 500),
-  gom_b_range = seq(0, 1000, 50),
-  gom_k_range = seq(0, 500, 2),
+  gom_a_range = seq(0, 3000, by = 500),
+  gom_b_range = seq(0.01, 1000, by = 50),
+  gom_k_range = seq(0, 500, by = 2),
   d_gom_a1_range = seq(0, 1, by = 0.001),
   d_gom_a2_range = seq(0, 5, by = 0.01),
   d_gom_b1_range = seq(0, 5, by = 0.001),
@@ -135,11 +135,13 @@ values for the 'k2' parameter within the double Gompertz function.}
 \value{
 a list with the following elements:
 \enumerate{
- \item $fitted - a data frame with fitted wood formation data
- \item $gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the Gompertz function.
- \item $gompertz_grid_search_errors - a data frame with unsuccessful cases of Gompertz grid search
- \item $double_gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the double Gompertz function.
- \item $double_gompertz_grid_search_errors - a data frame with unsuccessful cases of double Gompertz grid search
+ \item $fitted - a data frame with fitted values
+ \item $gompertz_initial_parameters - a data frame that contains a curated selection of initial parameter values for the Gompertz function.
+ \item $gompertz_model_parameters - a data frame with final model coefficients for the Gompertz function.
+ \item $gompertz_initial_parameters_errors - a data frame with unsuccessful cases of Gompertz grid search.
+ \item $double_gompertz_initial_parameters - a data frame that contains a curated selection of initial parameter values for the double Gompertz function.
+ \item $double_gompertz_initial_parameters_errors - a data frame with unsuccessful cases of double Gompertz grid search.
+ \item $doble_gompertz_model_parameters - a data frame with final model coefficients for the double Gompertz function.
 }
 }
 \description{
@@ -152,6 +154,8 @@ library(rTG)
 # 1 Example on xylem and phloem data
 data(parameters)
 data(data_trees)
+
+# subset data_trees
 data_trees <- data_trees[c(1:27),]
 
 # 1a Example using neural network
@@ -166,7 +170,7 @@ simulation_1a <- XPSgrowth(data_trees = data_trees,
      post_process = TRUE)
 
 \dontrun{
-#' # 1b Example on Double Gompertz function
+#' # 1b Example on double Gompertz function
 simulation_1b <- XPSgrowth(data_trees = data_trees,
      parameters = parameters,
      ID_vars = c("Species", "Tissue", "Site", "Year"),
@@ -180,6 +184,18 @@ simulation_1b <- XPSgrowth(data_trees = data_trees,
      d_gom_b1 = 2.433, d_gom_b2 = 2.900,
      d_gom_k1 = 0.974, d_gom_k2 = 0.963,
      post_process = TRUE)
+
+# 1b Example on Double Gompertz function without initial parameters
+simulation_1c <- XPSgrowth(data_trees = data_trees,
+     parameters = parameters,
+     ID_vars = c("Species", "Tissue", "Site", "Year"),
+     fitting_method = c("double_gompertz"),
+     fitted_save = FALSE,
+     search_initial_double_gom = TRUE,
+     post_process = TRUE)
+
+# Obtain model parameters
+simulation_1c$double_gompertz_model_parameters
 }
 
 # 2 Example on dendrometer data

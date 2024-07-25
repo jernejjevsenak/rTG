@@ -65,11 +65,13 @@
 #'
 #' @return a list with the following elements:
 #' \enumerate{
-#'  \item $fitted - a data frame with fitted wood formation data
-#'  \item $gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the Gompertz function.
-#'  \item $gompertz_grid_search_errors - a data frame with unsuccessful cases of Gompertz grid search
-#'  \item $double_gompertz_grid_search - a data frame that contains a curated selection of initial parameter values for the double Gompertz function.
-#'  \item $double_gompertz_grid_search_errors - a data frame with unsuccessful cases of double Gompertz grid search
+#'  \item $fitted - a data frame with fitted values
+#'  \item $gompertz_initial_parameters - a data frame that contains a curated selection of initial parameter values for the Gompertz function.
+#'  \item $gompertz_model_parameters - a data frame with final model coefficients for the Gompertz function.
+#'  \item $gompertz_initial_parameters_errors - a data frame with unsuccessful cases of Gompertz grid search.
+#'  \item $double_gompertz_initial_parameters - a data frame that contains a curated selection of initial parameter values for the double Gompertz function.
+#'  \item $double_gompertz_initial_parameters_errors - a data frame with unsuccessful cases of double Gompertz grid search.
+#'  \item $doble_gompertz_model_parameters - a data frame with final model coefficients for the double Gompertz function.
 #'}
 #'
 #' @export
@@ -80,6 +82,8 @@
 #' # 1 Example on xylem and phloem data
 #' data(parameters)
 #' data(data_trees)
+#'
+#' # subset data_trees
 #' data_trees <- data_trees[c(1:27),]
 #'
 #' # 1a Example using neural network
@@ -94,7 +98,7 @@
 #'      post_process = TRUE)
 #'
 #' \dontrun{
-#' #' # 1b Example on Double Gompertz function
+#' #' # 1b Example on double Gompertz function
 #' simulation_1b <- XPSgrowth(data_trees = data_trees,
 #'      parameters = parameters,
 #'      ID_vars = c("Species", "Tissue", "Site", "Year"),
@@ -108,6 +112,18 @@
 #'      d_gom_b1 = 2.433, d_gom_b2 = 2.900,
 #'      d_gom_k1 = 0.974, d_gom_k2 = 0.963,
 #'      post_process = TRUE)
+#'
+#' # 1b Example on Double Gompertz function without initial parameters
+#' simulation_1c <- XPSgrowth(data_trees = data_trees,
+#'      parameters = parameters,
+#'      ID_vars = c("Species", "Tissue", "Site", "Year"),
+#'      fitting_method = c("double_gompertz"),
+#'      fitted_save = FALSE,
+#'      search_initial_double_gom = TRUE,
+#'      post_process = TRUE)
+#'
+#' # Obtain model parameters
+#' simulation_1c$double_gompertz_model_parameters
 #' }
 #'
 #' # 2 Example on dendrometer data
@@ -137,9 +153,9 @@ XPSgrowth <- function(data_trees, parameters = NULL,
                  d_gom_k1 = NA, d_gom_k2 = NA,
                  brnn_neurons = NA,
                  gam_k = NA, gam_sp = NA,
-                 gom_a_range = c(0, 3000, 500),
-                 gom_b_range = seq(0, 1000, 50),
-                 gom_k_range = seq(0, 500, 2),
+                 gom_a_range = seq(0, 3000, by = 500),
+                 gom_b_range = seq(0.01, 1000, by = 50),
+                 gom_k_range = seq(0, 500, by = 2),
                  d_gom_a1_range = seq(0, 1, by = 0.001),
                  d_gom_a2_range = seq(0, 5, by = 0.01),
                  d_gom_b1_range = seq(0, 5, by = 0.001),
@@ -306,12 +322,19 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
   }
 
+  # Gompertz solution list
   list_temps <- list()
   list_errors <- list()
   list_solutions <- list()
   list_solution_a <- list()
   list_solution_b <- list()
   list_solution_k <- list()
+
+  # Gompertz list for extracted parameters
+  list_extracted <- list()
+  list_extracted_a <- list()
+  list_extracted_b <- list()
+  list_extracted_k <- list()
 
   # double Gompertz
   list_errors_dg <- list()
@@ -322,19 +345,31 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   list_solution_b2 <- list()
   list_solution_k1 <- list()
   list_solution_k2 <- list()
-  p3 = 1; p4 = 1
+  p3 = 1; p4 = 1; p3a = 1
+
+  # empty list for double Gompertz extracted parameters
+  list_extracted_dg <- list()
+  list_extracted_a1 <- list()
+  list_extracted_a2 <- list()
+  list_extracted_b1 <- list()
+  list_extracted_b2 <- list()
+  list_extracted_k1 <- list()
+  list_extracted_k2 <- list()
 
   # I define those two objects as NA
   # If grid search is used, they are overwritten
   errors_grid <- NA
   final_parameters <- NA
+  extracted_parameters <- NA
 
   errors_grid_dg <- NA
   final_parameters_dg <- NA
+  extracted_parameters_dg<- NA
 
   b_holder = 1
   p = 1
   p2 = 1
+  p2a = 1
   pbar_holder = 1
 
   unique_keys <- unique(data_trees$key)
@@ -407,7 +442,26 @@ if (current_fitting_method == "gompertz"){
 
     if (is(output, "nls") & !is.null(parm_test)){
 
+      # In some cases, when data is very noise, straight line fits
+      # Here I test for 0 prediction
+      test_zero <- round(mean(predict(output)),2)
+
+      if ((test_zero) < 0.01){
+        next()
+      }
+
       temp_data$width_pred <- predict(output)
+
+      extracted_a <- as.numeric(coef(output)[1])
+      extracted_b <- as.numeric(coef(output)[2])
+      extracted_k <- as.numeric(coef(output)[3])
+
+      # Here we save the extracted parameters from Gompertz model
+      list_extracted[[p2a]] <- i
+      list_extracted_a[[p2a]] <- extracted_a
+      list_extracted_b[[p2a]] <- extracted_b
+      list_extracted_k[[p2a]] <- extracted_k
+      p2a <- p2a + 1
 
       temp_data <- dplyr::arrange(temp_data, doy)
 
@@ -452,7 +506,21 @@ if (current_fitting_method == "gompertz"){
                                       minFactor = 1/1024, printEval = FALSE,
                                       warnOnly = FALSE)), silent=TRUE))
 
+
+
         if (is(output, "nls")){
+
+          # In some cases, when data is very noise, straight line fits
+          # Here I test for 0 prediction
+          test_zero <- round(mean(predict(output)),2)
+
+          if ((test_zero) < 0.01){
+            next()
+          }
+
+          extracted_a <- as.numeric(coef(output)[1])
+          extracted_b <- as.numeric(coef(output)[2])
+          extracted_k <- as.numeric(coef(output)[3])
 
           temp_data$width_pred <- predict(output)
 
@@ -473,6 +541,13 @@ if (current_fitting_method == "gompertz"){
             ggsave(paste0("gom_", i, ".png"), width = 7, height = 6)
           }
 
+          # Here we save the extracted parameters from Gompertz model
+          list_extracted[[p2]] <- i
+          list_extracted_a[[p2]] <- extracted_a
+          list_extracted_b[[p2]] <- extracted_b
+          list_extracted_k[[p2]] <- extracted_k
+
+          # These are the initial input parameters
           list_solution_a[[p2]] <- gom_a
           list_solution_b[[p2]] <- gom_b
           list_solution_k[[p2]] <- gom_k
@@ -490,10 +565,17 @@ if (current_fitting_method == "gompertz"){
   solutions <- c(do.call(rbind, list_solutions))
 
   final_parameters <- data.frame(
-    solutions = c(do.call(rbind, list_solutions)),
+    ID = c(do.call(rbind, list_solutions)),
     solution_a = c(do.call(rbind, list_solution_a)),
     solution_b = c(do.call(rbind, list_solution_b)),
     solution_k = c(do.call(rbind, list_solution_k))
+  )
+
+  extracted_parameters <- data.frame(
+    ID = c(do.call(rbind, list_extracted)),
+    a = c(do.call(rbind, list_extracted_a)),
+    b = c(do.call(rbind, list_extracted_b)),
+    k = c(do.call(rbind, list_extracted_k))
   )
 
   # remove solutions from errors grid
@@ -583,7 +665,32 @@ if (current_fitting_method == "gompertz"){
 
   if (is(output, "nls") & !is.null(parm_test)){
 
+    # In some cases, when data is very noise, straight line fits
+    # Here I test for 0 prediction
+    test_zero <- round(mean(predict(output)),2)
+
+    if ((test_zero) < 0.01){
+      next()
+    }
+
     temp_data$width_pred <- predict(output)
+
+    extracted_a1 <- as.numeric(coef(output)[1])
+    extracted_a2 <- as.numeric(coef(output)[2])
+    extracted_b1 <- as.numeric(coef(output)[3])
+    extracted_b2 <- as.numeric(coef(output)[4])
+    extracted_k1 <- as.numeric(coef(output)[5])
+    extracted_k2 <- as.numeric(coef(output)[6])
+
+    # Here we save the extracted parameters from Gompertz model
+    list_extracted_dg[[p3a]] <- i
+    list_extracted_a1[[p3a]] <- extracted_a1
+    list_extracted_b1[[p3a]] <- extracted_b1
+    list_extracted_k1[[p3a]] <- extracted_k1
+    list_extracted_a2[[p3a]] <- extracted_a2
+    list_extracted_b2[[p3a]] <- extracted_b2
+    list_extracted_k2[[p3a]] <- extracted_k2
+    p3a <- p3a + 1
 
     temp_data <- dplyr::arrange(temp_data, doy)
 
@@ -634,10 +741,24 @@ if (current_fitting_method == "gompertz"){
 
         if (is(output, "nls")){
 
+          # In some cases, when data is very noise, straight line fits
+          # Here I test for 0 prediction
+          test_zero <- round(mean(predict(output)),2)
+
+          if ((test_zero) < 0.01){
+            next()
+          }
+
           temp_data$width_pred <- predict(output)
 
-          temp_data <- dplyr::arrange(temp_data, doy)
+          extracted_a1 <- as.numeric(coef(output)[1])
+          extracted_a2 <- as.numeric(coef(output)[2])
+          extracted_b1 <- as.numeric(coef(output)[3])
+          extracted_b2 <- as.numeric(coef(output)[4])
+          extracted_k1 <- as.numeric(coef(output)[5])
+          extracted_k2 <- as.numeric(coef(output)[6])
 
+          temp_data <- dplyr::arrange(temp_data, doy)
 
           if (post_process == TRUE){
 
@@ -719,6 +840,16 @@ if (current_fitting_method == "gompertz"){
           list_solution_k1[[p3]] <- d_gom_k1
           list_solution_k2[[p3]] <- d_gom_k2
           list_solutions_dg[[p3]] <- i
+
+          # Here we save the extracted parameters from Gompertz model
+          list_extracted_dg[[p3]] <- i
+          list_extracted_a1[[p3]] <- extracted_a1
+          list_extracted_b1[[p3]] <- extracted_b1
+          list_extracted_k1[[p3]] <- extracted_k1
+          list_extracted_a2[[p3]] <- extracted_a2
+          list_extracted_b2[[p3]] <- extracted_b2
+          list_extracted_k2[[p3]] <- extracted_k2
+
           p3 <- p3 + 1
 
           break()
@@ -740,6 +871,18 @@ if (current_fitting_method == "gompertz"){
        solution_k1 = c(do.call(rbind, list_solution_k1)),
        solution_k2 = c(do.call(rbind, list_solution_k2))
      )
+
+     extracted_parameters_dg <- data.frame(
+       ID = c(do.call(rbind, list_extracted_dg)),
+       a1 = c(do.call(rbind, list_extracted_a1)),
+       b1 = c(do.call(rbind, list_extracted_b1)),
+       k1 = c(do.call(rbind, list_extracted_k1)),
+
+       a2 = c(do.call(rbind, list_extracted_a2)),
+       b2 = c(do.call(rbind, list_extracted_b2)),
+       k2 = c(do.call(rbind, list_extracted_k2))
+     )
+
 
      # remove solutions from errors grid
      errors_grid_dg <- errors_grid_dg[!(errors_grid_dg %in% solutions_dg)]
@@ -1016,10 +1159,13 @@ if (current_fitting_method == "gompertz"){
 } # end of ut
 
   output_list <- list(fitted = do.call(rbind, list_temps),
-                      gompertz_grid_search = final_parameters,
-                      gompertz_grid_search_errors = errors_grid,
-                      double_gompertz_grid_search = final_parameters_dg,
-                      double_gompertz_grid_search_errors = errors_grid_dg)
+                      gompertz_initial_parameters = final_parameters,
+                      gompertz_initial_parameters_errors = errors_grid,
+                      gompertz_model_parameters = extracted_parameters,
+                      double_gompertz_initial_parameters = final_parameters_dg,
+                      double_gompertz_initial_parameters_errors = errors_grid_dg,
+                      double_gompertz_model_parameters = extracted_parameters_dg
+                      )
 
   class(output_list) <- "xpsg"
 

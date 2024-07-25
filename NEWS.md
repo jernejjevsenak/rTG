@@ -1,3 +1,8 @@
+# rTG 1.0.3
+* minor bug was removed related to the definition of sequence parameters 
+* additional checks were implemented to prevent fitting s straight line
+* new output elements were added to the XPSgrowth(), i.e. tables with model parameters for Gompertz and double Gompertz functions
+
 # rTG 1.0.2
 * Dobule Gompertz function is implemented as an alternative option for model fitting
 

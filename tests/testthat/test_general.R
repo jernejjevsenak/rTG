@@ -17,8 +17,8 @@ simulation_1 <- XPSgrowth(data_trees = data_trees,
 # 1 Check the correct outputs
 expect_type(simulation_1, "list")
 expect_type(simulation_1$fitted, "list")
-expect_type(simulation_1$gompertz_grid_search, "list")
-expect_type(simulation_1$gompertz_grid_search_errors, "character")
+expect_type(simulation_1$gompertz_initial_parameters, "list")
+expect_type(simulation_1$gompertz_initial_parameters_errors, "character")
 
 # 2  If unified_parameters is used, you must provide initial parameters
 expect_error(
@@ -30,3 +30,4 @@ XPSgrowth(data_trees = data_trees,
           search_initial_gom = FALSE,
           add_zeros = TRUE,
           post_process = TRUE))
+
