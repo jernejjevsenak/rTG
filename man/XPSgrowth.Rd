@@ -9,7 +9,7 @@ XPSgrowth(
   parameters = NULL,
   search_initial_gom = FALSE,
   search_initial_double_gom = FALSE,
-  fitting_method = c("gompertz", "GAM", "brnn"),
+  fitting_method = c("gompertz", "GAM", "brnn", "double_gompertz"),
   ID_vars = NULL,
   fitted_save = FALSE,
   add_zeros = TRUE,
