@@ -140,7 +140,7 @@
 XPSgrowth <- function(data_trees, parameters = NULL,
                  search_initial_gom = FALSE,
                  search_initial_double_gom = FALSE,
-                 fitting_method = c("gompertz", "GAM", "brnn"),
+                 fitting_method = c("gompertz", "GAM", "brnn", "double_gompertz"),
                  ID_vars = NULL,
                  fitted_save = FALSE,
                  add_zeros = TRUE,
@@ -244,6 +244,26 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
     }
 
+    if ("gompertz" %in% fitting_method & unified_parameters == FALSE & search_initial_gom == FALSE){
+
+      warning("the parameter search_initial_gompertz was set to TRUE")
+
+      search_initial_gom = TRUE
+
+    }
+
+
+    if ("double_gompertz" %in% fitting_method & unified_parameters == FALSE & search_initial_double_gom == FALSE){
+
+      warning("the parameter search_initial_double_gom was set to TRUE")
+
+      search_initial_double_gom = TRUE
+
+    }
+
+
+
+
   }
 
 
@@ -304,6 +324,7 @@ XPSgrowth <- function(data_trees, parameters = NULL,
       if (sum(is.na(tm_g_p) > 0)){
 
         stop("If unified_parameters is used, you must provide GAM parameters")
+
 
       }
     }
