@@ -194,17 +194,6 @@ XPSgrowth <- function(data_trees, parameters = NULL,
     ID_vars <- ID_vars[!(ID_vars %in% c("doy", "width"))]
   }
 
-  # 1 are all ID_vars in both tables?
-  if(unified_parameters == FALSE){
-
-    if (sum(ID_vars %in% colnames(parameters) == FALSE)>0){
-      stop("check your ID_vars, they don't exist in your parameters")
-    }
-  }
-
-  if (sum(ID_vars %in% colnames(data_trees) == FALSE)>0){
-    stop("check your ID_vars, they don't exist in your data_treses")
-  }
 
   if (sum(is.na(data_trees)) > 0){
     stop("Please remove missing values from data_trees")
@@ -222,6 +211,54 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
   # Just in case, convert fitting methods to lowercase
   fitting_method <- tolower(fitting_method)
+
+  if (is.null(parameters)){
+
+    parameters <- data_trees %>% select(all_of(ID_vars)) %>% distinct() %>%
+
+      mutate(
+        gom_a =  3000,
+        gom_b = 2000,
+        gom_k = 10,
+
+        d_gom_a1 = 3000,
+        d_gom_a2 = 3000,
+        d_gom_b1 = 2000,
+        d_gom_b2 = 2000,
+        d_gom_k1 = 10,
+        d_gom_k2 = 10,
+
+        brnn_neurons = 3,
+        gam_k = 10,
+        gam_sp = 0.5)
+
+    if ("gam" %in% fitting_method & unified_parameters == FALSE){
+
+      warning("No parameters for GAM were provided. The following default values will be used: gam_k = 10 and gam_sp = 0.5")
+
+    }
+
+    if ("brnn" %in% fitting_method & unified_parameters == FALSE){
+
+      warning("No parameters for brnn were provided. The following default values will be used: brnn_n = 3")
+
+    }
+
+  }
+
+
+  # 1 are all ID_vars in both tables?
+  if(unified_parameters == FALSE){
+
+    if (sum(ID_vars %in% colnames(parameters) == FALSE)>0){
+      stop("check your ID_vars, they don't exist in your parameters")
+    }
+  }
+
+  if (sum(ID_vars %in% colnames(data_trees) == FALSE)>0){
+    stop("check your ID_vars, they don't exist in your data_treses")
+  }
+
 
   # If you use unified parameters, you must provide them
   if (unified_parameters == TRUE){
