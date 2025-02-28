@@ -104,26 +104,14 @@
 #'      ID_vars = c("Species", "Tissue", "Site", "Year"),
 #'      fitting_method = c("double_gompertz"),
 #'      fitted_save = FALSE,
-#'      search_initial_double_gom = FALSE,
-#'      unified_parameters = TRUE,
-#'      add_zeros = TRUE,
-#'      add_zeros_before = 'min',
-#'      d_gom_a1 = 0.204, d_gom_a2 = 0.240,
-#'      d_gom_b1 = 2.433, d_gom_b2 = 2.900,
-#'      d_gom_k1 = 0.974, d_gom_k2 = 0.963,
-#'      post_process = TRUE)
-#'
-#' # 1b Example on Double Gompertz function without initial parameters
-#' simulation_1c <- XPSgrowth(data_trees = data_trees,
-#'      parameters = parameters,
-#'      ID_vars = c("Species", "Tissue", "Site", "Year"),
-#'      fitting_method = c("double_gompertz"),
-#'      fitted_save = FALSE,
 #'      search_initial_double_gom = TRUE,
-#'      post_process = TRUE)
+#'      add_zeros = TRUE)
+#'
+#'  plot(simulation_1b)
 #'
 #' # Obtain model parameters
-#' simulation_1c$double_gompertz_model_parameters
+#' simulation_1b$double_gompertz_model_parameters
+#'
 #' }
 #'
 #' # 2 Example on dendrometer data
@@ -135,11 +123,12 @@
 #'                   brnn_neurons = 2, gam_k = 9, gam_sp = 0.5,
 #'                   search_initial_gom = TRUE, add_zeros = FALSE,
 #'                   post_process = TRUE)
-
+#'
+#' plot(simulation_2)
 
 XPSgrowth <- function(data_trees, parameters = NULL,
-                 search_initial_gom = FALSE,
-                 search_initial_double_gom = FALSE,
+                 search_initial_gom = TRUE,
+                 search_initial_double_gom = TRUE,
                  fitting_method = c("gompertz", "GAM", "brnn", "double_gompertz"),
                  ID_vars = NULL,
                  fitted_save = FALSE,
@@ -214,8 +203,11 @@ XPSgrowth <- function(data_trees, parameters = NULL,
 
   # If parameters table is provided, we make sure that all combinations are present
   if (!is.null(parameters)){
-  distinct_combinations_data <- data_trees %>% select(all_of(ID_vars)) %>% distinct()
-  distinct_combinations_parameters <- parameters %>% select(all_of(ID_vars)) %>% distinct()
+  distinct_combinations_data <- data_trees %>% dplyr::select(all_of(ID_vars)) %>% distinct()
+  distinct_combinations_data <- distinct_combinations_data %>% mutate_all(as.character)
+
+  distinct_combinations_parameters <- parameters %>% dplyr::select(all_of(ID_vars)) %>% distinct()
+  distinct_combinations_parameters <- distinct_combinations_parameters %>% mutate_all(as.character)
 
   missing_rows <- anti_join(distinct_combinations_data, distinct_combinations_parameters,
                             by = colnames(distinct_combinations_data))
@@ -235,7 +227,7 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   # In case parameters table is missing, we simulate one
   if (is.null(parameters)){
 
-    parameters <- data_trees %>% select(all_of(ID_vars)) %>% distinct() %>%
+    parameters <- data_trees %>% dplyr::select(all_of(ID_vars)) %>% distinct() %>%
 
       mutate(
         gom_a =  3000,
@@ -1272,9 +1264,3 @@ if (current_fitting_method == "gompertz"){
   return(output_list)
 
 }
-
-
-
-
-
-
