@@ -1,3 +1,7 @@
+# rTG 1.0.4
+* new functionality now allows analyses to be performed without the parameter table. In this case, random (reasonable) parameter values are assigned
+* a new check ensures that all instances in data_trees also have corresponding parameters in the 'parameters' table
+
 # rTG 1.0.3
 * minor bug was removed related to the definition of sequence parameters 
 * additional checks were implemented to prevent fitting s straight line

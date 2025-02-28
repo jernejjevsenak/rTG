@@ -1,6 +1,6 @@
 Dear CRAN, 
 
-This is a regular update of the rTG package. There are two main updates, 1) I improved the model fitting procedure for Gompertz function, which now prevents to fit a straight line; 2) I have added two additional output elements - tables with the output coefficients for Gompertz and double Gompertz functions
+This is a regular update of the rTG package.
 
 Best,
 Jernej 
@@ -10,9 +10,7 @@ Jernej
 
 ## Test environments
 * local OS X install, R 4.4.1
-
-
-* win-check oldrelease (https://win-builder.r-project.org/XKpmmBn7dwcz/00check.log)
+* win-check oldrelease (https://win-builder.r-project.org/kDgA8YTjQJnQ/00check.log)
 * win-check release (https://win-builder.r-project.org/CTZYkrUoyoJH/00check.log)
 * win-check devel (https://win-builder.r-project.org/8V4yq97pm2WJ/00check.log)
 
