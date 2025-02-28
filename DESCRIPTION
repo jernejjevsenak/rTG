@@ -2,10 +2,12 @@ Package: rTG
 Type: Package
 Title: Methods to Analyse Seasonal Radial Tree Growth Data
 Version: 1.0.4
-Authors@R: c(person("Jernej", "Jevsenak", role = c("aut", "cre"),
-              email = "jernej.jevsenak@gmail.com"), 
-              comment = c(ORCID = "0000-0002-4811-3624")
-              )
+Author: Jernej Jevsenak [aut, cre]
+Maintainer: Jernej Jevsenak <jernej.jevsenak@gmail.com>
+Authors@R: person(given = "Jernej",
+                    family = "Jevsenak",
+                    role = c("aut", "cre"),
+                    email = "jernej.jevsenak@gmail.com")
 Description: Methods for comparing different regression algorithms for 
     describing the temporal dynamics of secondary tree growth (xylem and 
     phloem). Users can compare the accuracy of the most common fitting methods 
