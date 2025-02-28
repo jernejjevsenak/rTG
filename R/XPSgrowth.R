@@ -212,6 +212,27 @@ XPSgrowth <- function(data_trees, parameters = NULL,
   # Just in case, convert fitting methods to lowercase
   fitting_method <- tolower(fitting_method)
 
+  # If parameters table is provided, we make sure that all combinations are present
+  if (!is.null(parameters)){
+  distinct_combinations_data <- data_trees %>% select(all_of(ID_vars)) %>% distinct()
+  distinct_combinations_parameters <- parameters %>% select(all_of(ID_vars)) %>% distinct()
+
+  missing_rows <- anti_join(distinct_combinations_data, distinct_combinations_parameters,
+                            by = colnames(distinct_combinations_data))
+
+  if (nrow(missing_rows) > 0){
+
+    stop(
+      "data_trees and parameters do not match\n
+      The following rows are missing:\n",
+      paste(apply(missing_rows, 1, paste, collapse = " | "), collapse = "\n")
+    )
+
+  }
+
+  }
+
+  # In case parameters table is missing, we simulate one
   if (is.null(parameters)){
 
     parameters <- data_trees %>% select(all_of(ID_vars)) %>% distinct() %>%
@@ -1215,6 +1236,27 @@ if (current_fitting_method == "gompertz"){
      pbar_holder = pbar_holder + 1
 
 } # end of ut
+
+
+  if (is.null(do.call(rbind, list_temps))){
+
+
+
+    if ("double_gompertz" %in% fitting_method & search_initial_double_gom == FALSE){
+
+      stop("all trials to fit the data failed. \ntry to set the parameter search_initial_double_gom = TRUE ")
+
+    }
+
+    if ("gompertz" %in% fitting_method & search_initial_gom == FALSE){
+
+      stop("all trials to fit the data failed. \ntry to set the parameter search_initial_gom = TRUE ")
+
+    }
+
+
+  }
+
 
   output_list <- list(fitted = do.call(rbind, list_temps),
                       gompertz_initial_parameters = final_parameters,
